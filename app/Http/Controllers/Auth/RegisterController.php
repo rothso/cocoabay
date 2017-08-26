@@ -8,6 +8,7 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class RegisterController extends Controller
 {
@@ -25,7 +26,7 @@ class RegisterController extends Controller
     /**
      * Handle a registration request for the application.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function register(Request $request)
@@ -35,7 +36,7 @@ class RegisterController extends Controller
 
         // Abort if the data doesn't conform to the database schema
         if ($validation->fails()) {
-            print_r($validation->failed());
+            print_r($validation->failed()); // TODO: remove in prod
             // TODO: Helpful message for the client & internal [info] logging for the server
             return response('One or more invalid request parameters', 422);
         }
@@ -59,7 +60,7 @@ class RegisterController extends Controller
         // The user is already registered and is resubmitting a new password
         $user = $record->first();
         $user->name = $request->name; // resync the user's display name in case they had changed it
-        $user->password = Hash::make($request->password); // FIXME: find the right way to update password
+        $user->password = Hash::make($request->password);
         $user->save();
 
         return response('Success!');
@@ -68,14 +69,16 @@ class RegisterController extends Controller
     /**
      * Get a validator for an incoming registration request.
      *
-     * @param  array  $data
+     * @param  array $data
      * @return \Illuminate\Contracts\Validation\Validator
      */
     protected function validator(array $data)
     {
+        $uniqueExceptSelf = Rule::unique('users')->ignore($data['uuid'], 'uuid');
+
         return Validator::make($data, [
-            'uuid' => 'required|uuid',
-            'username' => 'required|string|max:255',
+            'uuid' => ['required', 'uuid', $uniqueExceptSelf],
+            'username' => ['required', 'string', 'max:255', $uniqueExceptSelf],
             'name' => 'required|string|max:255',
             'password' => 'required|string|min:6',
         ]);
@@ -84,7 +87,7 @@ class RegisterController extends Controller
     /**
      * Create a new user instance after a valid registration.
      *
-     * @param  array  $data
+     * @param  array $data
      * @return \App\User
      */
     protected function create(array $data)

@@ -11,7 +11,7 @@ class RegisterTest extends TestCase
 {
     use DatabaseTransactions;
 
-    CONST UUID = '2e045f99-4807-4672-966f-b5af446f27be';
+    CONST UUID = '12345aaa-4807-4672-966f-b5af446f27be';
     CONST USERNAME = 'firstname.lastname';
     CONST NAME = 'Firstname Resident';
     CONST PASSWORD = 'super_secure123!!';

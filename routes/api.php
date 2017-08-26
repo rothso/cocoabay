@@ -1,6 +1,6 @@
 <?php
 
-use Illuminate\Http\Request;
+use App\Http\Middleware\LslProtected;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,9 +13,5 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
-// Registration Routes...
-Route::post('register', 'Auth\RegisterController@register');
+// Registration & password update hybrid
+Route::post('register', 'Auth\RegisterController@register')->middleware(LslProtected::class);

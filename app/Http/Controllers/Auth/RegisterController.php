@@ -36,9 +36,15 @@ class RegisterController extends Controller
 
         // Abort if the data doesn't conform to the database schema
         if ($validation->fails()) {
-            print_r($validation->failed()); // TODO: remove in prod
-            // TODO: Helpful message for the client & internal [info] logging for the server
-            return response('One or more invalid request parameters', 422);
+            $errors = $validation->getMessageBag();
+
+            if ($errors->has('password')) {
+                return response($errors->first('password'), 422);
+            }
+
+            // At least one of the context parameters failed validation. TODO: Report to Sentry.
+            return response('One or more invalid request parameters (script broken?).'
+                . 'The issue has been automatically reported.', 422);
         }
 
         // This lets us determine if we need to make a new record or update an existing one

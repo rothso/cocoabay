@@ -2,14 +2,14 @@
 
 namespace Tests\Feature;
 
+use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Support\Facades\Hash;
 use Mockery;
 use Tests\TestCase;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class RegisterTest extends TestCase
 {
-    use DatabaseTransactions;
+    use DatabaseMigrations;
 
     CONST UUID = '12345aaa-4807-4672-966f-b5af446f27be';
     CONST USERNAME = 'firstname.lastname';

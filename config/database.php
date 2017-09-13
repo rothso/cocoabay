@@ -78,6 +78,17 @@ return [
             'prefix' => '',
         ],
 
+        'sqlite_testing' => [
+            'driver'   => 'sqlite',
+            'database' => ':memory:',
+            'prefix'   => '',
+        ],
+
+        'sqlite_browser_testing' => [
+            'driver'   => 'sqlite',
+            'database' => database_path('testing.sqlite'),
+            'prefix'   => '',
+        ],
     ],
 
     /*

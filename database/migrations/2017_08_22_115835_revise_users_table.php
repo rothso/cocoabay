@@ -13,9 +13,18 @@ class ReviseUsersTable extends Migration
      */
     public function up()
     {
+        // Column modifications must be separate because of a leaky abstraction involving
+        // SQLite (which we use for unit testing).
+
         Schema::table('users', function (Blueprint $table) {
-            $table->char('uuid', 36)->after('id')->unique();
-            $table->string('username')->after('uuid')->unique();
+            $table->uuid('uuid')->after('id')->unique()->default('');
+        });
+
+        Schema::table('users', function (Blueprint $table) {
+            $table->string('username')->after('uuid')->unique()->default('');
+        });
+
+        Schema::table('users', function (Blueprint $table) {
             $table->dropColumn('email');
         });
     }
@@ -28,7 +37,10 @@ class ReviseUsersTable extends Migration
     public function down()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('email')->unique();
+            $table->string('email')->unique()->default('');
+        });
+
+        Schema::table('users', function (Blueprint $table) {
             $table->dropColumn(['uuid', 'username']);
         });
     }

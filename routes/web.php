@@ -23,4 +23,12 @@ Route::post('logout', 'Auth\LoginController@logout')->name('logout');
 // Registration Routes...
 $this->get('register', 'Auth\RegisterController@showInstructions')->name('register');
 
+// TODO: remove route, replace with single home index at "/"
 Route::get('/home', 'HomeController@index')->name('home');
+
+// DMV Routes...
+Route::prefix('dmv')->group(function() {
+//    Route::get('/', 'DmvController@index'); // TODO
+    Route::get('license', 'LicenseController@create');
+    Route::post('license', 'LicenseController@store')->name('license');
+});

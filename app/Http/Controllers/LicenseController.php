@@ -6,6 +6,7 @@ use Auth;
 use App\EyeColors;
 use App\HairColors;
 use App\DriversLicense;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -24,10 +25,11 @@ class LicenseController extends Controller
      */
     public function create()
     {
+        // Enums for the dropdown menus
         $eyeColors = EyeColors::pluck('name', 'id');
         $hairColors = HairColors::pluck('name', 'id');
 
-        return view('license.create', compact('eyeColors', 'hairColors'));
+        return view('dmv.license.create', compact('eyeColors', 'hairColors'));
     }
 
     /**
@@ -43,7 +45,8 @@ class LicenseController extends Controller
         // TODO: Handle duplicate licenses
         $this->makeLicense($request->all());
 
-        return response('Success');
+        $request->session()->flash('alert-success', "License successfully created!");
+        return redirect('dmv');
     }
 
     /**
@@ -86,8 +89,15 @@ class LicenseController extends Controller
             'weight' => 'required|integer|min:0|max:400',
             'eye_color' => 'required|exists:eye_colors,id', // foreign key
             'hair_color' => 'required|exists:hair_colors,id', // foreign key
-            'address' => 'required|string'
-        ])->setAttributeNames(['dob' => 'date of birth']);
+            'address' => 'required|string',
+        ], [
+            'max' => 'Your :attribute may not be greater than :max.',
+            'min' => 'Your :attribute may not be less than :min.',
+        ])->setAttributeNames([
+            'dob' => 'date of birth',
+            'height_ft' => 'height (ft)',
+            'height_in' => 'height (in)',
+        ]);
     }
 
 
@@ -106,6 +116,7 @@ class LicenseController extends Controller
         $license->eye_color_id = $data['eye_color'];
         $license->hair_color_id = $data['hair_color'];
         $license->address = $data['address'];
+        $license->expiry = Carbon::now()->addDays(90);
         $license->user()->associate(Auth::user());
         $license->save();
     }

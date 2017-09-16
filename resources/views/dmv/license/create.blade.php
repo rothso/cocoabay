@@ -58,13 +58,14 @@
                             </div>
 
                             {{-- Height --}}
-                            {{-- TODO replace with dropdown --}}
-                            <div class="form-group{{ $errors->has('height') ? ' has-error' : '' }}">
-                                <label class="col-md-4 control-label">Height</label>
+                            <div class="form-group">
+                                <div {!! $errors->has('height_ft') || $errors->has('height_in') ? 'class="has-error"' : '' !!}>
+                                    <label class="col-md-4 control-label">Height</label>
+                                </div>
 
                                 <div class="col-md-6">
                                     <div class="row">
-                                        <div class="col-md-6">
+                                        <div class="col-md-6 {{ $errors->has('height_ft') ? ' has-error' : '' }}">
                                             <div class="input-group">
                                                 <input type="number" class="form-control" id="height_ft" name="height_ft" value="{{ old('height_ft') }}" placeholder="Feet" required>
                                                 <div class="input-group-addon">ft</div>
@@ -77,7 +78,7 @@
                                                 </span>
                                             @endif
                                         </div>
-                                        <div class="col-md-6">
+                                        <div class="col-md-6 {{ $errors->has('height_in') ? ' has-error' : '' }}">
                                             <div class="input-group">
                                                 <input type="number" class="form-control" id="height_in" name="height_in" value="{{ old('height_in') }}" placeholder="Inches" required>
                                                 <div class="input-group-addon">in</div>

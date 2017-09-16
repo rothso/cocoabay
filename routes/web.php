@@ -28,7 +28,7 @@ Route::get('/home', 'HomeController@index')->name('home');
 
 // DMV Routes...
 Route::prefix('dmv')->group(function() {
-//    Route::get('/', 'DmvController@index'); // TODO
+    Route::get('/', 'DmvController@index')->name('dmv');
     Route::get('license', 'LicenseController@create');
     Route::post('license', 'LicenseController@store')->name('license');
 });

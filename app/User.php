@@ -28,6 +28,6 @@ class User extends Authenticatable
     ];
 
     public function license() {
-        return $this->hasOne('App\License')->withDefault();
+        return $this->hasOne('App\DriversLicense')->withDefault();
     }
 }

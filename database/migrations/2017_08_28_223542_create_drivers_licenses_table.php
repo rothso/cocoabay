@@ -16,12 +16,12 @@ class CreateDriversLicensesTable extends Migration
     {
         Schema::create('eye_colors', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('name');
+            $table->string('name')->unique();
         });
 
         Schema::create('hair_colors', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('name');
+            $table->string('name')->unique();
         });
 
         Schema::create('drivers_licenses', function (Blueprint $table) {
@@ -34,7 +34,7 @@ class CreateDriversLicensesTable extends Migration
             $table->integer('eye_color_id')->unsigned();
             $table->integer('hair_color_id')->unsigned();
             $table->string('address');
-            $table->timestamp('expiry'); // TODO rename to expires_at
+            $table->timestamp('expires_at')->nullable();
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onUpdate('cascade');

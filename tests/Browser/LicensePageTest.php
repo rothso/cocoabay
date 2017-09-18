@@ -25,21 +25,22 @@ class LicensePageTest extends DuskTestCase
         ]);
     }
 
-    public function testHappyForm()
+    public function testSuccessfulCreation()
     {
         $this->browse(function (Browser $browser) {
-            $browser->loginAs($this->user)
-                ->visit('/dmv/license')
+            $browser->loginAs($this->user)// FIXME: logging in as real DB user
+            ->visit('/dmv/license')
                 ->radio('gender', 'MALE')
                 ->keys('#dob', '03311990')
                 ->type('height_ft', '6')
                 ->type('height_in', '1')
-                ->type('weight', 160)
-                ->select('eye_color', '3')
-                ->select('hair_color', '4')
+                ->type('weight_lb', 160)
+                ->select('eye_color_id', '3')
+                ->select('hair_color_id', '4')
                 ->type('address', '3 Elm Street')
                 ->press('Create')
-                ->assertSee('Success');
+                ->assertSeeIn('.alert-success', 'License successfully created!')
+                ->assertPathIs(route('dmv'));
         });
 
         $this->assertDatabaseHas('drivers_licenses', [

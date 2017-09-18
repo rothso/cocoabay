@@ -2,13 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreLicense;
 use Auth;
-use App\EyeColors;
-use App\HairColors;
 use App\DriversLicense;
 use Carbon\Carbon;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
 
 class LicenseController extends Controller
 {
@@ -25,9 +23,11 @@ class LicenseController extends Controller
      */
     public function create()
     {
+        // TODO bind model to support editing
+
         // Enums for the dropdown menus
-        $eyeColors = EyeColors::pluck('name', 'id');
-        $hairColors = HairColors::pluck('name', 'id');
+        $eyeColors = DB::table('eye_colors')->pluck('name', 'id');
+        $hairColors = DB::table('hair_colors')->pluck('name', 'id');
 
         return view('dmv.license.create', compact('eyeColors', 'hairColors'));
     }
@@ -35,89 +35,47 @@ class LicenseController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param StoreLicense $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreLicense $request)
     {
-        $this->validator($request->all())->validate();
+        if (Auth::user()->license()->exists())
+            return $this->update($request);
 
-        // TODO: Handle duplicate licenses
-        $this->makeLicense($request->all());
+        $license = new DriversLicense;
+        $license->fill($this->prepareParams($request));
+        $license->setAttribute('expires_at', Carbon::now()->addDays(90));
+        $license->user()->associate(Auth::user());
+        $license->save();
 
-        $request->session()->flash('alert-success', "License successfully created!");
+        $request->session()->flash('alert-success', 'License successfully created!');
         return redirect('dmv');
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Update the user's license in storage.
      *
-     * @param  int  $id
+     * @param StoreLicense $request
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function update(StoreLicense $request)
     {
-        //
+        Auth::user()->license()->firstOrFail()->update($this->prepareParams($request));
+
+        $request->session()->flash('alert-success', 'License details successfully updated!');
+        return redirect('dmv');
     }
 
     /**
-     * Update the specified resource in storage.
+     * Prepare the request inputs for storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param StoreLicense $request
+     * @return array
      */
-    public function update(Request $request, $id)
+    private function prepareParams(StoreLicense $request)
     {
-        //
-    }
-
-
-    /**
-     * Get a validator for an incoming license request.
-     *
-     * @param  array $data
-     * @return \Illuminate\Contracts\Validation\Validator
-     */
-    protected function validator(array $data)
-    {
-        return Validator::make($data, [
-            'dob' => 'required|date|before:today',
-            'gender' => 'required|in:MALE,FEMALE',
-            'height_ft' => 'required|integer|min:0|max:7',
-            'height_in' => 'required|integer|min:0|max:11',
-            'weight' => 'required|integer|min:0|max:400',
-            'eye_color' => 'required|exists:eye_colors,id', // foreign key
-            'hair_color' => 'required|exists:hair_colors,id', // foreign key
-            'address' => 'required|string',
-        ], [
-            'max' => 'Your :attribute may not be greater than :max.',
-            'min' => 'Your :attribute may not be less than :min.',
-        ])->setAttributeNames([
-            'dob' => 'date of birth',
-            'height_ft' => 'height (ft)',
-            'height_in' => 'height (in)',
-        ]);
-    }
-
-
-    /**
-     * Create a new license after validation.
-     *
-     * @param  array $data
-     */
-    protected function makeLicense(array $data)
-    {
-        $license = new DriversLicense;
-        $license->dob = $data['dob'];
-        $license->gender = $data['gender'];
-        $license->height_in = $data['height_in'] + 12 * $data['height_ft'];
-        $license->weight_lb = $data['weight'];
-        $license->eye_color_id = $data['eye_color'];
-        $license->hair_color_id = $data['hair_color'];
-        $license->address = $data['address'];
-        $license->expiry = Carbon::now()->addDays(90);
-        $license->user()->associate(Auth::user());
-        $license->save();
+        $request->merge(['height_in' => $request->height_in + 12 * $request->height_ft]);
+        return $request->except('height_ft');
     }
 }

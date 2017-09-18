@@ -7,11 +7,16 @@ use Illuminate\Database\Eloquent\Model;
 
 class DriversLicense extends Model
 {
-    protected $appends = ['is_expired'];
+    protected $fillable = [
+        'dob', 'gender', 'height_in', 'weight_lb', 'eye_color_id', 'hair_color_id', 'address'
+    ];
+
     protected $dates = [
-        'created_at',
-        'updated_at',
-        'expiry'
+        'created_at', 'updated_at', 'expires_at'
+    ];
+
+    protected $appends = [
+        'is_expired'
     ];
 
     public function user()
@@ -21,6 +26,6 @@ class DriversLicense extends Model
 
     public function getIsExpiredAttribute()
     {
-        return Carbon::now()->greaterThan($this->expiry);
+        return Carbon::now()->greaterThan($this->expires_at);
     }
 }

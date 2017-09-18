@@ -95,56 +95,56 @@
                             </div>
 
                             {{-- Weight --}}
-                            <div class="form-group{{ $errors->has('weight') ? ' has-error' : '' }}">
+                            <div class="form-group{{ $errors->has('weight_lb') ? ' has-error' : '' }}">
                                 <label for="weight" class="col-md-4 control-label">Weight</label>
 
                                 <div class="col-md-6">
                                     <div class="input-group">
-                                        <input id="weight" type="number" class="form-control" name="weight" value="{{ old('weight') }}" placeholder="Weight" required>
+                                        <input id="weight" type="number" class="form-control" name="weight_lb" value="{{ old('weight_lb') }}" placeholder="Weight" required>
                                         <div class="input-group-addon">lb</div>
                                     </div>
 
-                                    @if ($errors->has('weight'))
+                                    @if ($errors->has('weight_lb'))
                                         <span class="help-block">
-                                            <strong>{{ $errors->first('weight') }}</strong>
+                                            <strong>{{ $errors->first('weight_lb') }}</strong>
                                         </span>
                                     @endif
                                 </div>
                             </div>
                             
                             {{-- Eye color --}}
-                            <div class="form-group{{ $errors->has('eye_color') ? ' has-error' : ''}}">
+                            <div class="form-group{{ $errors->has('eye_color_id') ? ' has-error' : ''}}">
                                 <label for="eye_color" class="col-md-4 control-label">Eye Color</label>
 
                                 <div class="col-md-6">
-                                    <select class="form-control" name="eye_color">
+                                    <select id="eye_color" class="form-control" name="eye_color_id">
                                         @foreach($eyeColors as $key => $color)
                                             <option value="{{ $key }}">{{ $color }}</option>
                                         @endforeach
                                     </select>
 
-                                    @if ($errors->has('eye_color'))
+                                    @if ($errors->has('eye_color_id'))
                                         <span class="help-block">
-                                            <strong>{{ $errors->first('eye_color') }}</strong>
+                                            <strong>{{ $errors->first('eye_color_id') }}</strong>
                                         </span>
                                     @endif
                                 </div>
                             </div>
 
                             {{--Hair Color--}}
-                            <div class="form-group{{ $errors->has('hair_color') ? ' has-error' : ''}}">
+                            <div class="form-group{{ $errors->has('hair_color_id') ? ' has-error' : ''}}">
                                 <label for="hair_color" class="col-md-4 control-label">Hair Color</label>
 
                                 <div class="col-md-6">
-                                    <select class="form-control" name="hair_color">
+                                    <select id="hair_color" class="form-control" name="hair_color_id">
                                         @foreach($hairColors as $key => $color)
                                             <option value="{{ $key }}">{{ $color }}</option>
                                         @endforeach
                                     </select>
 
-                                    @if ($errors->has('hair_color'))
+                                    @if ($errors->has('hair_color_id'))
                                         <span class="help-block">
-                                        <strong>{{ $errors->first('hair_color') }}</strong>
+                                            <strong>{{ $errors->first('hair_color_id') }}</strong>
                                         </span>
                                     @endif
                                 </div>

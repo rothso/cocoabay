@@ -32,20 +32,21 @@ class LicenseTest extends TestCase
         $this->be($fakeUser);
     }
 
-    public function testHappyPost()
+    public function testValidLicenseShouldSave()
     {
         $response = $this->post('dmv/license', [
             'dob' => '1990-03-31',
             'gender' => 'MALE',
             'height_ft' => 6,
             'height_in' => 1,
-            'weight' => 160,
-            'eye_color' => 3,
-            'hair_color' => 4,
+            'weight_lb' => 160,
+            'eye_color_id' => 3,
+            'hair_color_id' => 4,
             'address' => '12 Elm Street'
         ]);
 
-        $response->assertStatus(200);
+        $response->assertRedirect('dmv');
+        $response->assertSessionHas('alert-success');
         $this->assertDatabaseHas('drivers_licenses', [
             'dob' => '1990-03-31',
             'gender' => 'MALE',
@@ -55,5 +56,81 @@ class LicenseTest extends TestCase
             'hair_color_id' => 4,
             'address' => '12 Elm Street'
         ]);
+    }
+
+    public function testShouldOnlyAllowOneLicensePerUser()
+    {
+        $licenseData = [
+            'dob' => '1990-03-31',
+            'gender' => 'MALE',
+            'height_ft' => 6,
+            'height_in' => 1,
+            'weight_lb' => 160,
+            'eye_color_id' => 3,
+            'hair_color_id' => 4,
+            'address' => '12 Elm Street'
+        ];
+
+        // Submit twice
+        $this->post('dmv/license', $licenseData);
+        $this->post('dmv/license', $licenseData);
+
+        $numberRecords = $this->getConnection(null)
+            ->table('drivers_licenses')
+            ->where([
+                'dob' => '1990-03-31',
+                'gender' => 'MALE',
+                'height_in' => 6 * 12 + 1,
+                'weight_lb' => 160,
+                'eye_color_id' => 3,
+                'hair_color_id' => 4,
+                'address' => '12 Elm Street'
+            ])->count();
+
+        $this->assertEquals(1, $numberRecords);
+    }
+
+    public function testPatchShouldUpdate()
+    {
+        $licenseData = [
+            'dob' => '1990-03-31',
+            'gender' => 'MALE',
+            'height_ft' => 6,
+            'height_in' => 1,
+            'weight_lb' => 160,
+            'eye_color_id' => 3,
+            'hair_color_id' => 4,
+            'address' => '12 Elm Street'
+        ];
+
+        $this->post('dmv/license', $licenseData);
+        $response = $this->patch('dmv/license', array_replace($licenseData, ['address' => '441 Rose Street']));
+
+        $response->assertRedirect('dmv');
+        $response->assertSessionHas('alert-success');
+        $this->assertDatabaseHas('drivers_licenses', ['address' => '441 Rose Street']);
+        $this->assertDatabaseMissing('drivers_licenses', ['address' => '12 Elm Street']);
+    }
+
+    public function testPostTwiceShouldSilentlyPatch()
+    {
+        $licenseData = [
+            'dob' => '1990-03-31',
+            'gender' => 'MALE',
+            'height_ft' => 6,
+            'height_in' => 1,
+            'weight_lb' => 160,
+            'eye_color_id' => 3,
+            'hair_color_id' => 4,
+            'address' => '12 Elm Street'
+        ];
+
+        $this->post('dmv/license', $licenseData);
+        $response = $this->post('dmv/license', array_replace($licenseData, ['address' => '441 Rose Street']));
+
+        $response->assertRedirect('dmv');
+        $response->assertSessionHas('alert-success');
+        $this->assertDatabaseHas('drivers_licenses', ['address' => '441 Rose Street']);
+        $this->assertDatabaseMissing('drivers_licenses', ['address' => '12 Elm Street']);
     }
 }

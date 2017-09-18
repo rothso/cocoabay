@@ -105,7 +105,7 @@
                             @if(!$license->is_expired)
                                 <span class="label label-success pull-right">Active</span>
                             @else
-                                <span class="label label-danger pull-right">Expired {{ $license->expiry->diffForHumans() }}</span>
+                                <span class="label label-danger pull-right">Expired {{ $license->expires_at->diffForHumans() }}</span>
                             @endif
                         @endif
                     </div>
@@ -114,7 +114,7 @@
                             <p>You don't have a license yet. As a Resident, you may create one now for free.</p>
                             <a class="btn btn-primary" href="{{ route('license') }}" role="button">Create a License</a>
                         @else
-                            <p>You have a license!@if(!$license->is_expired) It will expire {{ $license->expiry->diffForHumans() }}.@endif</p>
+                            <p>You have a license!@if(!$license->is_expired) It will expire {{ $license->expires_at->diffForHumans() }}.@endif</p>
                         @endif
                     </div>
                 </div>

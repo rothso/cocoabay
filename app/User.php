@@ -27,6 +27,11 @@ class User extends Authenticatable
         'password', 'remember_token',
     ];
 
+    /**
+     * Each user can have at most one driver's license.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
     public function license() {
         return $this->hasOne('App\DriversLicense')->withDefault();
     }

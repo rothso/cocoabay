@@ -27,9 +27,14 @@ $this->get('register', 'Auth\RegisterController@showInstructions')->name('regist
 Route::get('/home', 'HomeController@index')->name('home');
 
 // DMV Routes...
-Route::prefix('dmv')->group(function() {
+Route::prefix('dmv')->group(function () {
     Route::get('/', 'DmvController@index')->name('dmv');
     Route::get('license', 'LicenseController@create')->name('license');
     Route::post('license', 'LicenseController@store');
     Route::patch('license', 'LicenseController@update');
+});
+
+// Eventually remove this route
+Route::get('/phpinfo', function () {
+    return phpinfo();
 });

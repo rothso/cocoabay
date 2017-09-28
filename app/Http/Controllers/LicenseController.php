@@ -7,6 +7,8 @@ use Auth;
 use App\DriversLicense;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Image;
+use Storage;
 
 class LicenseController extends Controller
 {
@@ -40,12 +42,16 @@ class LicenseController extends Controller
      */
     public function store(StoreLicense $request)
     {
-        if (Auth::user()->license()->exists())
+        $user = Auth::user();
+
+        if ($user->license()->exists())
             return $this->update($request);
 
         $license = new DriversLicense;
         $license->fill($this->prepareParams($request));
-        $license->setAttribute('expires_at', Carbon::now()->addDays(90));
+        $license->number = sprintf('%09d', mt_rand(0, 999999999)); // if collision, user will have to resubmit
+        $license->expires_at = Carbon::now()->addDays(90); // TODO verify
+        $license->photo = ''; // TODO upload profile image
         $license->user()->associate(Auth::user());
         $license->save();
 
@@ -61,7 +67,8 @@ class LicenseController extends Controller
      */
     public function update(StoreLicense $request)
     {
-        Auth::user()->license()->firstOrFail()->update($this->prepareParams($request));
+        $license = Auth::user()->license()->firstOrFail();
+        $license->update($this->prepareParams($request));
 
         $request->session()->flash('alert-success', 'License details successfully updated!');
         return redirect('dmv');

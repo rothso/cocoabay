@@ -14,6 +14,7 @@ class DmvController extends Controller
      */
     public function __construct()
     {
+        // TODO show splash when unauthenticated
         $this->middleware('auth');
     }
 
@@ -22,7 +23,8 @@ class DmvController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index() {
+    public function index()
+    {
         $license = Auth::user()->license()->first();
         return view('dmv.index')->with('license', $license);
     }

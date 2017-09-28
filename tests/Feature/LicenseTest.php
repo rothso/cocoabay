@@ -2,24 +2,22 @@
 
 namespace Tests\Feature;
 
+use App\DriversLicense;
 use App\User;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Storage;
 use Tests\TestCase;
 
 class LicenseTest extends TestCase
 {
     use DatabaseMigrations;
 
-    /*
-     * List of tests
-     * - Should not create more than one license
-     * - Duplicate submission for user should update
-     * - Something about the Eloquent relationships
-     */
-
     public function setUp()
     {
         parent::setup();
+
+        // Fake the default filesystem to avoid file name conflicts
+        Storage::fake('public');
 
         // Making a license requires the user to be logged in
         $fakeUser = User::create([
@@ -32,7 +30,7 @@ class LicenseTest extends TestCase
         $this->be($fakeUser);
     }
 
-    public function testValidLicenseShouldSave()
+    public function testValidLicenseShouldPersist()
     {
         $response = $this->post('dmv/license', [
             'dob' => '1990-03-31',
@@ -42,7 +40,8 @@ class LicenseTest extends TestCase
             'weight_lb' => 160,
             'eye_color_id' => 3,
             'hair_color_id' => 4,
-            'address' => '12 Elm Street'
+            'address' => '12 Elm Street',
+            'sim' => 'Lost Stars',
         ]);
 
         $response->assertRedirect('dmv');
@@ -54,8 +53,28 @@ class LicenseTest extends TestCase
             'weight_lb' => 160,
             'eye_color_id' => 3,
             'hair_color_id' => 4,
-            'address' => '12 Elm Street'
+            'address' => '12 Elm Street',
+            'sim' => 'Lost Stars',
         ]);
+    }
+
+    public function testValidLicenseShouldCreateImage() {
+        $this->post('dmv/license', [
+            'dob' => '1990-03-31',
+            'gender' => 'MALE',
+            'height_ft' => 6,
+            'height_in' => 1,
+            'weight_lb' => 160,
+            'eye_color_id' => 3,
+            'hair_color_id' => 4,
+            'address' => '12 Elm Street',
+            'sim' => 'Lost Stars',
+        ]);
+
+        $image = DriversLicense::find(1)->first()->image;
+        Storage::disk('public')->assertExists($image);
+
+        // TODO: test update should generate a new image and delete the old one
     }
 
     public function testShouldOnlyAllowOneLicensePerUser()
@@ -68,7 +87,8 @@ class LicenseTest extends TestCase
             'weight_lb' => 160,
             'eye_color_id' => 3,
             'hair_color_id' => 4,
-            'address' => '12 Elm Street'
+            'address' => '12 Elm Street',
+            'sim' => 'Lost Stars',
         ];
 
         // Submit twice
@@ -84,7 +104,8 @@ class LicenseTest extends TestCase
                 'weight_lb' => 160,
                 'eye_color_id' => 3,
                 'hair_color_id' => 4,
-                'address' => '12 Elm Street'
+                'address' => '12 Elm Street',
+                'sim' => 'Lost Stars',
             ])->count();
 
         $this->assertEquals(1, $numberRecords);
@@ -100,7 +121,8 @@ class LicenseTest extends TestCase
             'weight_lb' => 160,
             'eye_color_id' => 3,
             'hair_color_id' => 4,
-            'address' => '12 Elm Street'
+            'address' => '12 Elm Street',
+            'sim' => 'Lost Stars',
         ];
 
         $this->post('dmv/license', $licenseData);
@@ -122,7 +144,8 @@ class LicenseTest extends TestCase
             'weight_lb' => 160,
             'eye_color_id' => 3,
             'hair_color_id' => 4,
-            'address' => '12 Elm Street'
+            'address' => '12 Elm Street',
+            'sim' => 'Lost Stars',
         ];
 
         $this->post('dmv/license', $licenseData);

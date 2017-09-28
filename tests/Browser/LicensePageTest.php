@@ -7,6 +7,7 @@ use Tests\DuskTestCase;
 use Laravel\Dusk\Browser;
 use App\User;
 
+// FIXME: add sim field
 class LicensePageTest extends DuskTestCase
 {
     use DatabaseMigrations;

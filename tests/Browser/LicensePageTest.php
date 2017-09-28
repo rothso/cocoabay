@@ -2,12 +2,11 @@
 
 namespace Tests\Browser;
 
-use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Tests\DuskTestCase;
-use Laravel\Dusk\Browser;
 use App\User;
+use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Laravel\Dusk\Browser;
+use Tests\DuskTestCase;
 
-// FIXME: add sim field
 class LicensePageTest extends DuskTestCase
 {
     use DatabaseMigrations;
@@ -39,6 +38,7 @@ class LicensePageTest extends DuskTestCase
                 ->select('eye_color_id', '3')
                 ->select('hair_color_id', '4')
                 ->type('address', '3 Elm Street')
+                ->type('sim', 'Lost Stars')
                 ->press('Create')
                 ->assertSeeIn('.alert-success', 'License successfully created!')
                 ->assertPathIs(route('dmv'));
@@ -51,7 +51,8 @@ class LicensePageTest extends DuskTestCase
             'weight_lb' => 160,
             'eye_color_id' => 3,
             'hair_color_id' => 4,
-            'address' => '3 Elm Street'
+            'address' => '3 Elm Street',
+            'sim' => 'Lost Stars',
         ]);
     }
 }

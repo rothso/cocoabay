@@ -164,6 +164,21 @@
                                     @endif
                                 </div>
                             </div>
+
+                            {{-- Sim --}}
+                            <div class="form-group{{ $errors->has('sim') ? ' has-error' : '' }}">
+                                <label for="sim" class="col-md-4 control-label">Sim</label>
+
+                                <div class="col-md-6">
+                                    <input id="sim" type="text" class="form-control" name="sim" value="{{ old('sim') }}" placeholder="Sim" required>
+
+                                    @if ($errors->has('sim'))
+                                        <span class="help-block">
+                                            <strong>{{ $errors->first('sim') }}</strong>
+                                        </span>
+                                    @endif
+                                </div>
+                            </div>
                             
                             <div class="form-group">
                                 <div class="col-md-6 col-md-offset-4">

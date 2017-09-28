@@ -32,6 +32,7 @@ class StoreLicense extends FormRequest
             'eye_color_id' => 'required|exists:eye_colors,id', // foreign key
             'hair_color_id' => 'required|exists:hair_colors,id', // foreign key
             'address' => 'required|string',
+            'sim' => 'required|string',
         ];
     }
 

@@ -7,6 +7,10 @@ use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Laravel\Dusk\Browser;
 use Tests\DuskTestCase;
 
+/**
+ * Note: This test MUST be run from `php artisan dusk` to work properly. Running from the IDE will
+ * cause Dusk to use the wrong database, because PHPStorm doesn't pick up the .env.dusk file.
+ */
 class LicensePageTest extends DuskTestCase
 {
     use DatabaseMigrations;
@@ -28,8 +32,8 @@ class LicensePageTest extends DuskTestCase
     public function testSuccessfulCreation()
     {
         $this->browse(function (Browser $browser) {
-            $browser->loginAs($this->user)// FIXME: logging in as real DB user
-            ->visit('/dmv/license')
+            $browser->loginAs($this->user)
+                ->visit('/dmv/license')
                 ->radio('gender', 'MALE')
                 ->keys('#dob', '03311990')
                 ->type('height_ft', '6')
@@ -41,7 +45,7 @@ class LicensePageTest extends DuskTestCase
                 ->type('sim', 'Lost Stars')
                 ->press('Create')
                 ->assertSeeIn('.alert-success', 'License successfully created!')
-                ->assertPathIs(route('dmv'));
+                ->assertPathIs('/dmv');
         });
 
         $this->assertDatabaseHas('drivers_licenses', [

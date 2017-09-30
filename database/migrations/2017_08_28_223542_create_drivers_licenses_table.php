@@ -38,7 +38,7 @@ class CreateDriversLicensesTable extends Migration
             $table->integer('hair_color_id')->unsigned();
             $table->string('address');
             $table->string('sim');
-            $table->string('photo')->unique();
+            $table->string('photo')->unique()->nullable();
             $table->string('image')->unique();
             $table->timestamp('expires_at')->nullable();
             $table->timestamps();

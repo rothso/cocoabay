@@ -24,7 +24,7 @@ class StoreLicense extends FormRequest
     public function rules()
     {
         return [
-            'dob' => 'required|date|before:today',
+            'dob' => 'required|date_format:Y-m-d|before:today',
             'gender' => 'required|in:MALE,FEMALE',
             'height_ft' => 'required|integer|min:0|max:7',
             'height_in' => 'required|integer|min:0|max:11',

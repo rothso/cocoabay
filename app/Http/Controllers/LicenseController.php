@@ -3,10 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\DriversLicense;
+use App\EyeColor;
+use App\HairColor;
 use App\Http\Requests\StoreLicense;
 use Auth;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\DB;
 
 class LicenseController extends Controller
 {
@@ -28,8 +29,8 @@ class LicenseController extends Controller
         $license = $user->license;
 
         // Enums for the dropdown menus
-        $eyeColors = DB::table('eye_colors')->pluck('name', 'id');
-        $hairColors = DB::table('hair_colors')->pluck('name', 'id');
+        $eyeColors = EyeColor::pluck('name', 'id');
+        $hairColors = HairColor::pluck('name', 'id');
 
         return view('dmv.license.create', compact('user', 'license', 'eyeColors', 'hairColors'));
     }
@@ -44,14 +45,14 @@ class LicenseController extends Controller
     {
         $user = Auth::user();
 
-        if ($user->license()->exists()) // TODO check convention
+        if ($user->license()->exists())
             return $this->update($request);
 
         $license = new DriversLicense;
         $license->fill($this->prepareParams($request));
         $license->number = sprintf('%09d', mt_rand(0, 999999999)); // if collision, user will have to resubmit
-        $license->expires_at = Carbon::now()->addDays(90); // TODO verify
-        $license->photo = ''; // TODO upload profile image
+        $license->expires_at = Carbon::now()->addDays(90); // TODO: move logic to model
+        $license->photo = null; // TODO upload profile image
         $license->user()->associate(Auth::user());
         $license->save();
 
@@ -67,7 +68,7 @@ class LicenseController extends Controller
      */
     public function update(StoreLicense $request)
     {
-        $license = Auth::user()->license()->firstOrFail(); // TODO check convention
+        $license = Auth::user()->license()->firstOrFail();
         $license->update($this->prepareParams($request));
 
         $request->session()->flash('alert-success', 'License details successfully updated!');

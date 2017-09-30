@@ -5,7 +5,6 @@ namespace Tests\Feature;
 use App\DriversLicense;
 use App\User;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Storage;
 use Tests\TestCase;
 
 class LicenseTest extends TestCase
@@ -19,14 +18,8 @@ class LicenseTest extends TestCase
         // Fake the default filesystem to avoid file name conflicts
         Storage::fake('public');
 
-        // Making a license requires the user to be logged in
-        $fakeUser = User::create([
-            'uuid' => 'e5668cc3-c9bd-4b1f-9c40-5a66009aadde',
-            'username' => 'testuser',
-            'name' => 'name',
-            'password' => bcrypt('password'),
-        ]);
-
+        // Must be logged in to create a license
+        $fakeUser = factory(User::class)->create();
         $this->be($fakeUser);
     }
 
@@ -73,8 +66,6 @@ class LicenseTest extends TestCase
 
         $image = DriversLicense::find(1)->first()->image;
         Storage::disk('public')->assertExists($image);
-
-        // TODO: test update should generate a new image and delete the old one
     }
 
     public function testShouldOnlyAllowOneLicensePerUser()

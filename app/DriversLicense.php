@@ -9,7 +9,8 @@ use Illuminate\Database\Eloquent\Model;
 class DriversLicense extends Model
 {
     protected $fillable = [
-        'dob', 'gender', 'height_in', 'weight_lb', 'eye_color_id', 'hair_color_id', 'address', 'sim'
+        'dob', 'gender', 'height_in', 'weight_lb',
+        'eye_color_id', 'hair_color_id', 'address', 'sim'
     ];
 
     protected $dates = [

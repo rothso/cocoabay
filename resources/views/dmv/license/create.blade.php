@@ -39,7 +39,10 @@
                                 <label for="dob" class="col-md-4 control-label">Date of Birth</label>
 
                                 <div class="col-md-6">
-                                    <input id="dob" type="date" class="form-control" name="dob" value="{{ old('dob', !is_null($license) ? $license->dob->format('Y-m-d') : null) }}" required>
+                                    <div class="input-group date" id="datepicker">
+                                        <input id="dob" type="text" class="form-control" name="dob" value="{{ old('dob', !is_null($license) ? $license->dob->format('Y-m-d') : null) }}" required>
+                                        <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+                                    </div>
 
                                     @if ($errors->has('dob'))
                                         <span class="help-block">
@@ -103,7 +106,7 @@
                                     @endif
                                 </div>
                             </div>
-                            
+
                             {{-- Eye color --}}
                             <div class="form-group{{ $errors->has('eye_color_id') ? ' has-error' : ''}}">
                                 <label for="eye_color" class="col-md-4 control-label">Eye Color</label>
@@ -171,7 +174,7 @@
                                     @endif
                                 </div>
                             </div>
-                            
+
                             <div class="form-group">
                                 <div class="col-md-6 col-md-offset-4">
                                     <button type="submit" class="btn btn-primary">
@@ -186,3 +189,18 @@
         </div>
     </div>
 @endsection
+
+@push('scripts')
+<script type="text/javascript">
+    $(function () {
+        $('#datepicker').datetimepicker({
+            viewMode: 'years',
+            format: 'YYYY-MM-DD', // format sent to the server
+            extraFormats: [ // other accepted user inputs
+                'MM/DD/YYYY',
+                'MM-DD-YYYY'
+            ]
+        });
+    });
+</script>
+@endpush

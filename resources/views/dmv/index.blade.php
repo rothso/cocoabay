@@ -42,9 +42,9 @@
                     @else
                         <p>You have a license!@if(!$license->is_expired) It will expire {{ $license->expires_at->diffForHumans() }}, on {{ $license->expires_at->format('F jS') }}.@endif</p>
                         <ul>
-                            <li><a href="#">View your license</a></li>
-                            <li><a href="#">Edit your license</a></li>
-                            <li><a href="#">Renew your license</a></li>
+                            <li><a href="{{ asset('storage/' . $license->image) }}">View your license</a></li>
+                            <li><a href="{{ route('license') }}">Edit your license</a></li>
+                            <li><span style="color: #999">Renew your license</span></li>
                         </ul>
                     @endif
                 </div>

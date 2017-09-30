@@ -9,22 +9,14 @@
                     <div class="panel-body">
                         <form class="form-horizontal" method="POST" action="{{ route('license') }}">
                             {{ csrf_field() }}
+                            @if(!is_null($license)){{ method_field('PATCH') }}@endif
 
                             {{-- Name (static) --}}
                             <div class="form-group">
                                 <label class="col-md-4 control-label">Name</label>
 
                                 <div class="col-md-6">
-                                    <p class="form-control-static">{{ Auth::user()->name }}</p>
-                                </div>
-                            </div>
-
-                            {{-- UUID (static) --}}
-                            <div class="form-group">
-                                <label class="col-md-4 control-label">UUID</label>
-
-                                <div class="col-md-6">
-                                    <p class="form-control-static">{{ Auth::user()->uuid }}</p>
+                                    <p class="form-control-static">{{ $user->name }}</p>
                                 </div>
                             </div>
 
@@ -34,10 +26,10 @@
 
                                 <div class="col-md-6">
                                     <label for="gender-male" class="radio-inline">
-                                        <input type="radio" name="gender" id="gender-male" value="MALE" autofocus required @if(old('gender') == 'MALE') checked @endif> Male
+                                        <input type="radio" name="gender" id="gender-male" value="MALE" required @if(old('gender', optional($license)->gender) == 'MALE') checked @endif> Male
                                     </label>
                                     <label for="gender-female" class="radio-inline">
-                                        <input type="radio" name="gender" id="gender-female" value="FEMALE" required @if(old('gender') == 'FEMALE') checked @endif> Female
+                                        <input type="radio" name="gender" id="gender-female" value="FEMALE" required @if(old('gender', optional($license)->gender) == 'FEMALE') checked @endif> Female
                                     </label>
                                 </div>
                             </div>
@@ -47,7 +39,7 @@
                                 <label for="dob" class="col-md-4 control-label">Date of Birth</label>
 
                                 <div class="col-md-6">
-                                    <input id="dob" type="date" class="form-control" name="dob" value="{{ old('dob') }}" required>
+                                    <input id="dob" type="date" class="form-control" name="dob" value="{{ old('dob', !is_null($license) ? $license->dob->format('Y-m-d') : null) }}" required>
 
                                     @if ($errors->has('dob'))
                                         <span class="help-block">
@@ -67,7 +59,7 @@
                                     <div class="row">
                                         <div class="col-md-6 {{ $errors->has('height_ft') ? ' has-error' : '' }}">
                                             <div class="input-group">
-                                                <input type="number" class="form-control" id="height_ft" name="height_ft" value="{{ old('height_ft') }}" placeholder="Feet" required>
+                                                <input type="number" class="form-control" id="height_ft" name="height_ft" value="{{ old('height_ft', !is_null($license) ? floor($license->height_in / 12) : null) }}" placeholder="Feet" required>
                                                 <div class="input-group-addon">ft</div>
                                             </div>
 
@@ -80,7 +72,7 @@
                                         </div>
                                         <div class="col-md-6 {{ $errors->has('height_in') ? ' has-error' : '' }}">
                                             <div class="input-group">
-                                                <input type="number" class="form-control" id="height_in" name="height_in" value="{{ old('height_in') }}" placeholder="Inches" required>
+                                                <input type="number" class="form-control" id="height_in" name="height_in" value="{{ old('height_in', !is_null($license) ? $license->height_in % 12 : null) }}" placeholder="Inches" required>
                                                 <div class="input-group-addon">in</div>
                                             </div>
 
@@ -100,7 +92,7 @@
 
                                 <div class="col-md-6">
                                     <div class="input-group">
-                                        <input id="weight" type="number" class="form-control" name="weight_lb" value="{{ old('weight_lb') }}" placeholder="Weight" required>
+                                        <input id="weight" type="number" class="form-control" name="weight_lb" value="{{ old('weight_lb', optional($license)->weight_lb) }}" placeholder="Weight" required>
                                         <div class="input-group-addon">lb</div>
                                     </div>
 
@@ -119,7 +111,7 @@
                                 <div class="col-md-6">
                                     <select id="eye_color" class="form-control" name="eye_color_id">
                                         @foreach($eyeColors as $key => $color)
-                                            <option value="{{ $key }}">{{ $color }}</option>
+                                            <option value="{{ $key }}" @if(optional($license)->eye_color_id == $key)selected @endif>{{ $color }}</option>
                                         @endforeach
                                     </select>
 
@@ -138,7 +130,7 @@
                                 <div class="col-md-6">
                                     <select id="hair_color" class="form-control" name="hair_color_id">
                                         @foreach($hairColors as $key => $color)
-                                            <option value="{{ $key }}">{{ $color }}</option>
+                                            <option value="{{ $key }}" @if(optional($license)->hair_color_id == $key)selected @endif>{{ $color }}</option>
                                         @endforeach
                                     </select>
 
@@ -155,7 +147,7 @@
                             <label for="address" class="col-md-4 control-label">Street Address</label>
 
                                 <div class="col-md-6">
-                                    <input id="address" type="text" class="form-control" name="address" value="{{ old('address') }}" placeholder="Address" required>
+                                    <input id="address" type="text" class="form-control" name="address" value="{{ old('address', optional($license)->address) }}" placeholder="Address" required>
 
                                     @if ($errors->has('address'))
                                         <span class="help-block">
@@ -170,7 +162,7 @@
                                 <label for="sim" class="col-md-4 control-label">Sim</label>
 
                                 <div class="col-md-6">
-                                    <input id="sim" type="text" class="form-control" name="sim" value="{{ old('sim') }}" placeholder="Sim" required>
+                                    <input id="sim" type="text" class="form-control" name="sim" value="{{ old('sim', optional($license)->sim) }}" placeholder="Sim" required>
 
                                     @if ($errors->has('sim'))
                                         <span class="help-block">

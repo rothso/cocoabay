@@ -59,4 +59,6 @@ class LicensePageTest extends DuskTestCase
             'sim' => 'Lost Stars',
         ]);
     }
+
+    // TODO testPrefillExistingLicense()
 }

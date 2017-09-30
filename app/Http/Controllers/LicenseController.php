@@ -2,13 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\DriversLicense;
 use App\Http\Requests\StoreLicense;
 use Auth;
-use App\DriversLicense;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
-use Image;
-use Storage;
 
 class LicenseController extends Controller
 {
@@ -25,13 +23,15 @@ class LicenseController extends Controller
      */
     public function create()
     {
-        // TODO bind model to support editing
+        // If a license already exists, we want to prefill the form
+        $user = Auth::user();
+        $license = $user->license;
 
         // Enums for the dropdown menus
         $eyeColors = DB::table('eye_colors')->pluck('name', 'id');
         $hairColors = DB::table('hair_colors')->pluck('name', 'id');
 
-        return view('dmv.license.create', compact('eyeColors', 'hairColors'));
+        return view('dmv.license.create', compact('user', 'license', 'eyeColors', 'hairColors'));
     }
 
     /**
@@ -44,7 +44,7 @@ class LicenseController extends Controller
     {
         $user = Auth::user();
 
-        if ($user->license()->exists())
+        if ($user->license()->exists()) // TODO check convention
             return $this->update($request);
 
         $license = new DriversLicense;
@@ -67,7 +67,7 @@ class LicenseController extends Controller
      */
     public function update(StoreLicense $request)
     {
-        $license = Auth::user()->license()->firstOrFail();
+        $license = Auth::user()->license()->firstOrFail(); // TODO check convention
         $license->update($this->prepareParams($request));
 
         $request->session()->flash('alert-success', 'License details successfully updated!');

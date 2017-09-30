@@ -11,6 +11,7 @@ class DriversLicensesTableSeeder extends Seeder
      */
     public function run()
     {
+        DB::table('drivers_licenses')->delete();
         DB::table('drivers_licenses')->insert([
             'user_id' => 1,
             'number' => '179193072',

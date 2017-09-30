@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class CreateDriversLicensesTable extends Migration
 {
@@ -43,9 +43,9 @@ class CreateDriversLicensesTable extends Migration
             $table->timestamp('expires_at')->nullable();
             $table->timestamps();
 
-            $table->foreign('user_id')->references('id')->on('users')->onUpdate('cascade');
-            $table->foreign('eye_color_id')->references('id')->on('eye_colors')->onUpdate('cascade');
-            $table->foreign('hair_color_id')->references('id')->on('hair_colors')->onUpdate('cascade');
+            $table->foreign('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreign('eye_color_id')->references('id')->on('eye_colors')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreign('hair_color_id')->references('id')->on('hair_colors')->onUpdate('cascade')->onDelete('cascade');
         });
 
         // Seed the initial colors. To add new colors, do so in phpMyAdmin as migration files shouldn't be updated.

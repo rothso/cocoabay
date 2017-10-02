@@ -1,13 +1,62 @@
-@extends('layouts.app')
+@extends('layouts.heroic')
+
+<style type="text/css">
+    .hero {
+        margin-bottom: -200px !important;
+        padding-bottom: 150px !important;
+    }
+    .hero .breadcrumb {
+        background: transparent;
+        padding-left: 0;
+        padding-right: 0;
+    }
+    .hero .breadcrumb li:not(.active) {
+        opacity: 0.5;
+    }
+    .panel {
+        box-shadow: 0 0 10px rgba(0,0,0,0.15) !important;
+    }
+</style>
+
+@section('hero')
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            @if(!is_null($license))
+            <h2 class="text-center">Edit License</h2>
+            <p class="text-center" style="opacity: 0.5">Need to update your license? No problem!</p>
+            @else
+            <h2 class="text-center">Create License</h2>
+            <p class="text-center" style="opacity: 0.5">Want to drive? We'll mint you a new license.</p>
+            @endif
+        </div>
+        <div class="col-md-8 col-md-offset-2 hidden">
+            <ol class="breadcrumb">
+                <li><a href="{{ route('home') }}">Home</a></li>
+                <li><a href="{{ route('dmv') }}">DMV</a></li>
+                <li class="active">Edit License</li>
+            </ol>
+        </div>
+    </div>
+</div>
+@endsection
 
 @section('content')
     <div class="container">
         <div class="row">
             <div class="col-md-8 col-md-offset-2">
-                <div class="panel panel-default">
-                    <div class="panel-heading">Create</div>
-                    <div class="panel-body">
-                        <form class="form-horizontal" method="POST" action="{{ route('license') }}">
+                <form class="form-horizontal" method="POST" action="{{ route('license') }}">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <a class="btn btn-default" href="{{ route('dmv') }}">
+                                <span class="glyphicon glyphicon-menu-left"></span>
+                                {{ is_null($license) ? 'Go Back' : 'Cancel' }}
+                            </a>
+                            <button type="submit" class="btn btn-primary pull-right">
+                                {{ is_null($license) ? 'Create License' : 'Save Changes' }}
+                            </button>
+                        </div>
+                        <div class="panel-body">
                             {{ csrf_field() }}
                             @if(!is_null($license)){{ method_field('PATCH') }}@endif
 
@@ -174,17 +223,9 @@
                                     @endif
                                 </div>
                             </div>
-
-                            <div class="form-group">
-                                <div class="col-md-6 col-md-offset-4">
-                                    <button type="submit" class="btn btn-primary">
-                                        Create
-                                    </button>
-                                </div>
-                            </div>
-                        </form>
+                        </div>
                     </div>
-                </div>
+                </form>
             </div>
         </div>
     </div>

@@ -31,6 +31,7 @@ class LicensePageTest extends DuskTestCase
 
     public function testSuccessfulCreation()
     {
+        // FIXME: add file upload
         $this->browse(function (Browser $browser) {
             $browser->loginAs($this->user)
                 ->visit('/dmv/license')

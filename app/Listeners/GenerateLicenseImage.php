@@ -28,7 +28,7 @@ class GenerateLicenseImage
 
         // Load into memory the images we need
         $template = Image::make(Storage::get('templates/drivers_license.png'));
-        $headshot = Image::make(Storage::get('templates/devin.png')); // TODO get from db
+        $headshot = Image::make(Storage::get($license->photo))->fit(200, 200);
 
         // Define all our fonts beforehand to keep the code clean
         $fontHeader = $this->defineFont('AR DECODE Thin', 32);

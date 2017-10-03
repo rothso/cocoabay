@@ -24,6 +24,7 @@ class StoreLicense extends FormRequest
     public function rules()
     {
         return [
+            'photo' => 'required|image|mimes:png,gif,jpg,jpeg,svg|max:2048',
             'dob' => 'required|date_format:Y-m-d|before:today',
             'gender' => 'required|in:MALE,FEMALE',
             'height_ft' => 'required|integer|min:0|max:7',

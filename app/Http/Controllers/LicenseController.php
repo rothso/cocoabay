@@ -52,7 +52,7 @@ class LicenseController extends Controller
         $license->fill($this->prepareParams($request));
         $license->number = sprintf('%09d', mt_rand(0, 999999999)); // if collision, user will have to resubmit
         $license->expires_at = Carbon::now()->addDays(90); // TODO: move logic to model
-        $license->photo = null; // TODO upload profile image
+	    $license->photo = $request->file('photo')->store('license/photos');
         $license->user()->associate(Auth::user());
         $license->save();
 
@@ -70,6 +70,9 @@ class LicenseController extends Controller
     {
         $license = Auth::user()->license()->firstOrFail();
         $license->update($this->prepareParams($request));
+
+        // TODO: actually upload the photo on update lol
+        // TODO: delete old user photo on update
 
         $request->session()->flash('alert-success', 'License details successfully updated!');
         return redirect('dmv');

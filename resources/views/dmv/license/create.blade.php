@@ -45,7 +45,7 @@
     <div class="container">
         <div class="row">
             <div class="col-md-8 col-md-offset-2">
-                <form class="form-horizontal" method="POST" action="{{ route('license') }}">
+                <form class="form-horizontal" method="POST" action="{{ route('license') }}" enctype="multipart/form-data">
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             <a class="btn btn-default" href="{{ route('dmv') }}">
@@ -69,6 +69,21 @@
                                 </div>
                             </div>
 
+                            {{-- Photo --}}
+                            <div class="form-group {{ $errors->has('photo') ? 'has-error' : '' }}">
+                                <label for="photo" class="col-md-4 control-label">Photo</label>
+
+                                <div class="col-md-6">
+                                    <input type="file" name="photo" id="photo" accept="image/png, image/jpg, image/jpeg, image/gif" required>
+
+                                    @if ($errors->has('photo'))
+                                    <span class="help-block">
+                                        <strong>{{ $errors->first('photo') }}</strong>
+                                    </span>
+                                    @endif
+                                </div>
+                            </div>
+
                             {{-- Gender --}}
                             <div class="form-group {{ $errors->has('gender') ? 'has-error' : '' }}">
                                 <label class="col-md-4 control-label">Sex</label>
@@ -80,6 +95,12 @@
                                     <label for="gender-female" class="radio-inline">
                                         <input type="radio" name="gender" id="gender-female" value="FEMALE" required @if(old('gender', optional($license)->gender) == 'FEMALE') checked @endif> Female
                                     </label>
+
+                                    @if ($errors->has('gender'))
+                                    <span class="help-block">
+                                        <strong>{{ $errors->first('gender') }}</strong>
+                                    </span>
+                                    @endif
                                 </div>
                             </div>
 

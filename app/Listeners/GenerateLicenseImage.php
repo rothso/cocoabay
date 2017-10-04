@@ -23,12 +23,15 @@ class GenerateLicenseImage
         $license = $event->license;
         $holder = $license->user;
 
-        if(!$license->isDirty())
+        if (!$license->isDirty())
             return;
 
-        // Load into memory the images we need
-        $template = Image::make(Storage::get('templates/drivers_license.png'));
-        $headshot = Image::make(Storage::get($license->photo))->fit(200, 200);
+        // Load into memory the base image
+        $template = Image::make(resource_path('imgproc/drivers_license.png'));
+
+        // Load into memory the photo to be overlaid
+        $headshotPath = $license->photo ? Storage::get($license->photo) : resource_path('imgproc/devin.png');
+        $headshot = Image::make($headshotPath)->fit(200, 200);
 
         // Define all our fonts beforehand to keep the code clean
         $fontHeader = $this->defineFont('AR DECODE Thin', 32);

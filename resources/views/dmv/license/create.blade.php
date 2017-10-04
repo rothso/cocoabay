@@ -27,7 +27,7 @@
             <p class="text-center" style="opacity: 0.5">Need to update your license? No problem!</p>
             @else
             <h2 class="text-center">Create License</h2>
-            <p class="text-center" style="opacity: 0.5">Want to drive? We'll mint you a new license.</p>
+            <p class="text-center" style="opacity: 0.5">Want to drive? We'll mint you a fresh license.</p>
             @endif
         </div>
         <div class="col-md-8 col-md-offset-2 hidden">

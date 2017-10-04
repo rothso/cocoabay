@@ -22,8 +22,21 @@ class DriversLicense extends Model
     ];
 
     protected $events = [
-        'saving' => DriversLicenseSaving::class
+        'creating' => DriversLicenseSaving::class,
+        'updating' => DriversLicenseSaving::class,
     ];
+
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+
+        // We use the "saving" hook to ensure this runs before the license image is generated
+        self::saving(function ($license) {
+            $license->number = $license->number ?: sprintf('%09d', mt_rand(0, 999999999));
+            $license->expires_at = $license->expires_at ?: Carbon::now()->addDays(90);
+        });
+    }
+
 
     public function user()
     {

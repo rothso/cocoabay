@@ -7,8 +7,7 @@ use App\User;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Http\UploadedFile;
 use Tests\TestCase;
-
-//use Storage;
+use Storage;
 
 class LicenseTest extends TestCase
 {

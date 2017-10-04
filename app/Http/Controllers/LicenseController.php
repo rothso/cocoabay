@@ -50,8 +50,6 @@ class LicenseController extends Controller
 
         $license = new DriversLicense;
         $license->fill($this->prepareParams($request));
-        $license->number = sprintf('%09d', mt_rand(0, 999999999)); // if collision, user will have to resubmit
-        $license->expires_at = Carbon::now()->addDays(90); // TODO: move logic to model
 	    $license->photo = $request->file('photo')->store('license/photos');
         $license->user()->associate(Auth::user());
         $license->save();

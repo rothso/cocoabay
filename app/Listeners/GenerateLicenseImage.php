@@ -30,7 +30,7 @@ class GenerateLicenseImage
         $template = Image::make(resource_path('imgproc/drivers_license.png'));
 
         // Load into memory the photo to be overlaid
-        $headshotPath = $license->photo ? Storage::get($license->photo) : resource_path('imgproc/devin.png');
+        $headshotPath = $license->photo ? Storage::disk('public')->get($license->photo) : resource_path('imgproc/devin.png');
         $headshot = Image::make($headshotPath)->fit(200, 200);
 
         // Define all our fonts beforehand to keep the code clean

@@ -7,7 +7,7 @@ use App\EyeColor;
 use App\HairColor;
 use App\Http\Requests\StoreLicense;
 use Auth;
-use Carbon\Carbon;
+use Storage;
 
 class LicenseController extends Controller
 {
@@ -24,9 +24,11 @@ class LicenseController extends Controller
      */
     public function create()
     {
-        // If a license already exists, we want to prefill the form
         $user = Auth::user();
-        $license = $user->license;
+
+        // Wrap in optional() in case license is null; missing properties will return null
+        // instead of throwing a "getting non-property of null object" exception.
+        $license = optional($user->license);
 
         // Enums for the dropdown menus
         $eyeColors = EyeColor::pluck('name', 'id');
@@ -50,7 +52,7 @@ class LicenseController extends Controller
 
         $license = new DriversLicense;
         $license->fill($this->prepareParams($request));
-	    $license->photo = $request->file('photo')->store('license/photos');
+        $license->photo = $request->file('photo')->store('license/photos', 'public'); // TODO: extract logic
         $license->user()->associate(Auth::user());
         $license->save();
 
@@ -67,10 +69,14 @@ class LicenseController extends Controller
     public function update(StoreLicense $request)
     {
         $license = Auth::user()->license()->firstOrFail();
-        $license->update($this->prepareParams($request));
 
-        // TODO: actually upload the photo on update lol
-        // TODO: delete old user photo on update
+        // If user uploaded a new photo
+        if ($request->photo != null) {
+            Storage::disk('public')->delete($license->photo);
+            $license->photo = $request->file('photo')->store('license/photos', 'public');
+        }
+
+        $license->update($this->prepareParams($request));
 
         $request->session()->flash('alert-success', 'License details successfully updated!');
         return redirect('dmv');

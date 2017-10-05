@@ -62,4 +62,5 @@ class LicensePageTest extends DuskTestCase
     }
 
     // TODO testPrefillExistingLicense()
+    // TODO assert right messages are displayed, e.g. "Edit License" when editing
 }

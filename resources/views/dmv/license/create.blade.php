@@ -22,12 +22,12 @@
 <div class="container">
     <div class="row">
         <div class="col-md-6 col-md-offset-3">
-            @if(!is_null($license))
-            <h2 class="text-center">Edit License</h2>
-            <p class="text-center" style="opacity: 0.5">Need to update your license? No problem!</p>
+            @if($license->exists)
+                <h2 class="text-center">Edit License</h2>
+                <p class="text-center" style="opacity: 0.5">Need to update your license? No problem!</p>
             @else
-            <h2 class="text-center">Create License</h2>
-            <p class="text-center" style="opacity: 0.5">Want to drive? We'll mint you a fresh license.</p>
+                <h2 class="text-center">Create License</h2>
+                <p class="text-center" style="opacity: 0.5">Want to drive? We'll mint you a fresh license.</p>
             @endif
         </div>
         <div class="col-md-8 col-md-offset-2 hidden">
@@ -50,15 +50,15 @@
                         <div class="panel-heading">
                             <a class="btn btn-default" href="{{ route('dmv') }}">
                                 <span class="glyphicon glyphicon-menu-left"></span>
-                                {{ is_null($license) ? 'Go Back' : 'Cancel' }}
+                                {{ !$license->exists ? 'Go Back' : 'Cancel' }}
                             </a>
                             <button type="submit" class="btn btn-primary pull-right">
-                                {{ is_null($license) ? 'Create License' : 'Save Changes' }}
+                                {{ !$license->exists ? 'Create License' : 'Save Changes' }}
                             </button>
                         </div>
                         <div class="panel-body">
                             {{ csrf_field() }}
-                            @if(!is_null($license)){{ method_field('PATCH') }}@endif
+                            {{ $license->exists ? method_field('PATCH') : '' }}
 
                             {{-- Name (static) --}}
                             <div class="form-group">
@@ -71,15 +71,21 @@
 
                             {{-- Photo --}}
                             <div class="form-group {{ $errors->has('photo') ? 'has-error' : '' }}">
-                                <label for="photo" class="col-md-4 control-label">Photo</label>
+                                <label class="col-md-4 control-label">Photo</label>
 
                                 <div class="col-md-6">
-                                    <input type="file" name="photo" id="photo" accept="image/png, image/jpg, image/jpeg, image/gif" required>
+                                    {{-- TODO: extract into Vue component --}}
+                                    <div class="thumbnail" style="margin-bottom: 0">
+                                        <img id="photo-preview" class="hidden img-responsive" src="{{ is_null($license->photo) ? '' : Storage::url($license->photo) }}" style="width: 200px; height: 200px; object-fit: cover; margin-bottom: 5px">
+                                        <label id="photo-choose" for="photo" class="btn btn-block btn-default btn-file">Choose new photo</label>
+                                        <button id="photo-cancel" type="button" class="btn btn-block btn-danger hidden">Cancel selection</button>
+                                    </div>
+                                    <input class="hidden" type="file" name="photo" id="photo" accept="image/*">
 
                                     @if ($errors->has('photo'))
-                                    <span class="help-block">
-                                        <strong>{{ $errors->first('photo') }}</strong>
-                                    </span>
+                                        <span class="help-block">
+                                            <strong>{{ $errors->first('photo') }}</strong>
+                                        </span>
                                     @endif
                                 </div>
                             </div>
@@ -90,10 +96,10 @@
 
                                 <div class="col-md-6">
                                     <label for="gender-male" class="radio-inline">
-                                        <input type="radio" name="gender" id="gender-male" value="MALE" required @if(old('gender', optional($license)->gender) == 'MALE') checked @endif> Male
+                                        <input type="radio" name="gender" id="gender-male" value="MALE" required @if(old('gender', $license->gender) == 'MALE') checked @endif> Male
                                     </label>
                                     <label for="gender-female" class="radio-inline">
-                                        <input type="radio" name="gender" id="gender-female" value="FEMALE" required @if(old('gender', optional($license)->gender) == 'FEMALE') checked @endif> Female
+                                        <input type="radio" name="gender" id="gender-female" value="FEMALE" required @if(old('gender', $license->gender) == 'FEMALE') checked @endif> Female
                                     </label>
 
                                     @if ($errors->has('gender'))
@@ -110,7 +116,7 @@
 
                                 <div class="col-md-6">
                                     <div class="input-group date" id="datepicker">
-                                        <input id="dob" type="text" class="form-control" name="dob" value="{{ old('dob', !is_null($license) ? $license->dob->format('Y-m-d') : null) }}" required>
+                                        <input id="dob" type="text" class="form-control" name="dob" value="{{ old('dob', optional($license->dob)->format('Y-m-d')) }}" required>
                                         <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
                                     </div>
 
@@ -165,7 +171,7 @@
 
                                 <div class="col-md-6">
                                     <div class="input-group">
-                                        <input id="weight" type="number" class="form-control" name="weight_lb" value="{{ old('weight_lb', optional($license)->weight_lb) }}" placeholder="Weight" required>
+                                        <input id="weight" type="number" class="form-control" name="weight_lb" value="{{ old('weight_lb', $license->weight_lb) }}" placeholder="Weight" required>
                                         <div class="input-group-addon">lb</div>
                                     </div>
 
@@ -184,7 +190,7 @@
                                 <div class="col-md-6">
                                     <select id="eye_color" class="form-control" name="eye_color_id">
                                         @foreach($eyeColors as $key => $color)
-                                            <option value="{{ $key }}" @if(optional($license)->eye_color_id == $key)selected @endif>{{ $color }}</option>
+                                            <option value="{{ $key }}" @if($license->eye_color_id == $key)selected @endif>{{ $color }}</option>
                                         @endforeach
                                     </select>
 
@@ -203,7 +209,7 @@
                                 <div class="col-md-6">
                                     <select id="hair_color" class="form-control" name="hair_color_id">
                                         @foreach($hairColors as $key => $color)
-                                            <option value="{{ $key }}" @if(optional($license)->hair_color_id == $key)selected @endif>{{ $color }}</option>
+                                            <option value="{{ $key }}" @if($license->hair_color_id == $key)selected @endif>{{ $color }}</option>
                                         @endforeach
                                     </select>
 
@@ -220,7 +226,7 @@
                             <label for="address" class="col-md-4 control-label">Street Address</label>
 
                                 <div class="col-md-6">
-                                    <input id="address" type="text" class="form-control" name="address" value="{{ old('address', optional($license)->address) }}" placeholder="Address" required>
+                                    <input id="address" type="text" class="form-control" name="address" value="{{ old('address', $license->address) }}" placeholder="Address" required>
 
                                     @if ($errors->has('address'))
                                         <span class="help-block">
@@ -235,7 +241,7 @@
                                 <label for="sim" class="col-md-4 control-label">Sim</label>
 
                                 <div class="col-md-6">
-                                    <input id="sim" type="text" class="form-control" name="sim" value="{{ old('sim', optional($license)->sim) }}" placeholder="Sim" required>
+                                    <input id="sim" type="text" class="form-control" name="sim" value="{{ old('sim', $license->sim) }}" placeholder="Sim" required>
 
                                     @if ($errors->has('sim'))
                                         <span class="help-block">
@@ -263,6 +269,51 @@
                 'MM-DD-YYYY'
             ]
         });
+
+        // Dirty image upload magic. TODO: refactor into Vue component
+        const originalPhotoSrc = $("#photo-preview").attr('src');
+
+        if (originalPhotoSrc !== '') {
+            $("#photo-preview").removeClass('hidden');
+        }
+
+        $("#photo").change(function() {
+            var input = this;
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    $('#photo-preview').removeClass('hidden');
+                    $('#photo-preview').attr('src', e.target.result);
+                    $('#photo-choose').addClass('hidden');
+                    $('#photo-cancel').removeClass('hidden');
+                };
+
+                reader.readAsDataURL(input.files[0]);
+            }
+        });
+
+        function resetFormElement(e) {
+            e.wrap('<form>').closest('form').get(0).reset();
+            e.unwrap();
+
+            // Prevent form submission
+            e.stopPropagation();
+            e.preventDefault();
+        }
+
+        $("#photo-cancel").click(function() {
+            if (!originalPhotoSrc) {
+                $("#photo-preview").addClass('hidden');
+            }
+
+            $(this).addClass('hidden');
+            $("#photo-choose").removeClass('hidden');
+            $("#photo-preview").attr('src', originalPhotoSrc);
+
+            // clear the underlying input field
+            resetFormElement($("#photo")); // MUST be called last for some reason
+        })
     });
 </script>
 @endpush

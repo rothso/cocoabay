@@ -6,8 +6,8 @@ use App\DriversLicense;
 use App\User;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
-use Storage;
 
 class LicenseTest extends TestCase
 {
@@ -22,7 +22,6 @@ class LicenseTest extends TestCase
 
         // Fake the filesystem to avoid polluting our real storage
         Storage::fake('public');
-        Storage::fake('local');
 
         // Must be logged in to create a license
         $fakeUser = factory(User::class)->create();
@@ -79,7 +78,7 @@ class LicenseTest extends TestCase
 
         // User photo should be saved
         $photo = DriversLicense::find(1)->first()->photo;
-        Storage::disk('local')->assertExists($photo);
+        Storage::disk('public')->assertExists($photo);
     }
 
     public function testValidLicenseShouldGenerateImage() {
@@ -89,6 +88,22 @@ class LicenseTest extends TestCase
         // Image should be generated
         $image = DriversLicense::find(1)->first()->image;
         Storage::disk('public')->assertExists($image);
+    }
+
+    public function testUpdateWithPhotoShouldReplacePhoto() {
+        $newData = array_replace($this->licenseData, [
+            'photo' => UploadedFile::fake()->image('test.png', 20, 20)
+        ]);
+
+        // Create a license, then update the photo
+        $this->post('dmv/license', $this->licenseData);
+        $oldPhoto = DriversLicense::find(1)->first()->photo;
+        $this->patch('dmv/license', $newData);
+        $newPhoto = DriversLicense::find(1)->first()->photo;
+
+        // Only the newest photo should be in storage
+        Storage::disk('public')->assertExists($newPhoto);
+        Storage::disk('public')->assertMissing($oldPhoto);
     }
 
     public function testShouldOnlyAllowOneLicensePerUser()

@@ -12,6 +12,9 @@
 */
 
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
+
+use Illuminate\Http\UploadedFile;
+
 $factory->define(App\User::class, function (Faker\Generator $faker) {
     static $password;
 
@@ -24,9 +27,12 @@ $factory->define(App\User::class, function (Faker\Generator $faker) {
     ];
 });
 
-$factory->define(App\DriversLicense::class, function(Faker\Generator $faker) {
+$factory->define(App\DriversLicense::class, function (Faker\Generator $faker) {
+    // Each photo will be a different size to ensure the hashes are unique
+    $dimen =  $faker->unique()->numberBetween(0, 200);
+
     return [
-        'user_id' => function() {
+        'user_id' => function () {
             return factory(App\User::class)->create()->id;
         },
         'number' => $faker->randomNumber(9),
@@ -38,6 +44,7 @@ $factory->define(App\DriversLicense::class, function(Faker\Generator $faker) {
         'hair_color_id' => $faker->randomElement(\App\HairColor::pluck('id')->all()),
         'address' => $faker->streetAddress,
         'sim' => $faker->city,
+        'photo' => UploadedFile::fake()->image('test.png', $dimen, $dimen)->store('license/photo', 'public'),
         'expires_at' => $faker->dateTimeBetween('now', '90 days'),
     ];
 });

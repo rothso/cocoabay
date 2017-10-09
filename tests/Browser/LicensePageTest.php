@@ -31,10 +31,10 @@ class LicensePageTest extends DuskTestCase
 
     public function testSuccessfulCreation()
     {
-        // FIXME: add file upload
         $this->browse(function (Browser $browser) {
             $browser->loginAs($this->user)
                 ->visit('/dmv/license')
+                ->attach('photo', resource_path('imgproc/devin.png'))
                 ->radio('gender', 'MALE')
                 ->keys('#dob', '03311990')
                 ->type('height_ft', '6')

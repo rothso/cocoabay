@@ -1,0 +1,56 @@
+version: 2
+
+jobs:
+  build:
+    docker:
+      - image: circleci/php:7.1.8-browsers
+    working_directory: ~/cocoabay
+    steps:
+      - checkout
+      - run: curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
+      - run: sudo apt install -y libsqlite3-dev libfreetype6-dev libmcrypt-dev libzip-dev libpng-dev libjpeg-dev nodejs
+      - run: sudo docker-php-ext-configure gd --enable-gd-native-ttf --with-freetype-dir=/usr/include/freetype2 --with-png-dir=/usr/include --with-jpeg-dir=/usr/include
+      - run: sudo docker-php-ext-install gd
+      - run: sudo docker-php-ext-install zip
+
+      # Composer
+      - restore_cache:
+          keys:
+            - composer-v1-{{ checksum "composer.json" }}
+            - composer-v1-
+      - run: composer install -n --prefer-dist --ignore-platform-reqs
+      - save_cache:
+          key: composer-v1-{{ checksum "composer.json" }}
+          paths:
+            - vendor
+
+      # NPM
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+      - run: npm install
+      - save_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+          paths:
+            - node_modules
+
+      - store_artifacts:
+          path: tests/Browser/screenshots
+
+      - run: cp .env.testing .env
+      - run: npm run production
+      - run: vendor/bin/phpunit
+      - run: touch database/testing.sqlite
+
+      - run:
+          name: Start Chrome Driver
+          command: vendor/laravel/dusk/bin/chromedriver-linux
+          background: true
+
+      - run:
+          name: Run Laravel Server
+          command: php artisan serve --env=dusk.testing
+          background: true
+
+      - run:
+          name: Run Laravel Dusk Tests
+          command: php artisan dusk

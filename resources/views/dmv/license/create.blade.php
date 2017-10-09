@@ -2,8 +2,8 @@
 
 <style type="text/css">
     .hero {
-        margin-bottom: -200px !important;
-        padding-bottom: 150px !important;
+        margin-bottom: -75px !important;
+        padding-bottom: 25px !important;
     }
     .hero .breadcrumb {
         background: transparent;

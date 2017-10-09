@@ -1,5 +1,12 @@
 @extends('layouts.heroic')
 
+<style>
+    .hero .jumbotron {
+        padding-top: 72px;
+        padding-bottom: 72px;
+    }
+</style>
+
 @section('hero')
 <div class="container">
     <h1>DMV <small>Self Service</small></h1>

@@ -8431,3 +8431,24 @@ button.close {
   opacity: 0.25;
 }
 
+.tos li {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.footer {
+  border-top: 1px solid #d3e0e9;
+  margin-top: 10px;
+  padding-top: 10px;
+  padding-bottom: 20px;
+}
+
+.footer .footer-item {
+  padding-right: 10px;
+  font-size: 12px;
+}
+
+.footer .footer-item.copyright {
+  color: #949ba3;
+}
+

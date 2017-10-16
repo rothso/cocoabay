@@ -12,6 +12,7 @@
 */
 
 Route::get('/', 'HomeController@welcome');
+Route::get('/legal/tos', 'LegalController@tos')->name('tos');
 
 // Authentication Routes...
 Route::get('login', 'Auth\LoginController@showLoginForm')->name('login');
@@ -19,7 +20,7 @@ Route::post('login', 'Auth\LoginController@login');
 Route::post('logout', 'Auth\LoginController@logout')->name('logout');
 
 // Registration Routes...
-$this->get('register', 'Auth\RegisterController@showInstructions')->name('register');
+Route::get('register', 'Auth\RegisterController@showInstructions')->name('register');
 
 // TODO: remove route, replace with single home index at "/"
 Route::get('/home', 'HomeController@index')->name('home');

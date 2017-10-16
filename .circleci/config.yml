@@ -19,6 +19,7 @@ jobs:
             - composer-v1-{{ checksum "composer.json" }}
             - composer-v1-
       - run: composer install -n --prefer-dist --ignore-platform-reqs
+      - run: composer require marcin-orlowski/process-dotenv
       - save_cache:
           key: composer-v1-{{ checksum "composer.json" }}
           paths:
@@ -59,7 +60,6 @@ jobs:
           name: Deploy to HostGator
           command: |
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
-              composer require marcin-orlowski/process-dotenv
               php vendor/bin/process-dotenv .env.dist > .env
               ssh-keyscan -p 2222 -H ${HOST_IP} >> ~/.ssh/known_hosts
               scp -P 2222 .env ${HOST_USER}@${HOST_IP}:/tmp

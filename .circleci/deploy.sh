@@ -17,6 +17,8 @@ if [ ! -d "cocoabay" ]; then
     ln -s ~/cocoabay/storage/app/public storage
 else
     cd ~/cocoabay
+    # Revert the compiled assets to allow a clean merge; "npm run" will later recompile them anyway
+    git checkout -- public/css/app.css public/js/app.js
     git pull
 fi
 

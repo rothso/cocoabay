@@ -1,7 +1,7 @@
 <!-- Legal -->
 <div class="container">
     <div class="footer">
-        <span class="footer-item copyright">&copy; 2017 Cocoabay Estates.</span>
+        <span class="footer-item copyright">&copy; 2017 Cocoa Bay Estates</span>
         <span class="footer-item"><a href="{{ route('tos') }}">Terms</a></span>
     </div>
 </div>

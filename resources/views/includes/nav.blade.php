@@ -19,6 +19,7 @@
 
             <a class="navbar-brand" href="{{ url('/') }}">
                 {{ config('app.name', 'Laravel') }}
+                <span class="label label-small label-primary">Closed Beta</span>
             </a>
         </div>
 

@@ -8423,6 +8423,17 @@ button.close {
   color: #5bc0de;
 }
 
+.navbar .label {
+  font-size: 10px;
+  margin-left: 5px;
+  vertical-align: 4px;
+}
+
+.navbar-inverse .label-primary {
+  background: #ffffff;
+  color: #109C85;
+}
+
 .hero .jumbotron * {
   color: #fff;
 }

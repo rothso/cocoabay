@@ -11,9 +11,7 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', 'HomeController@welcome');
 
 // Authentication Routes...
 Route::get('login', 'Auth\LoginController@showLoginForm')->name('login');
@@ -32,9 +30,4 @@ Route::prefix('dmv')->group(function () {
     Route::get('license', 'LicenseController@create')->name('license');
     Route::post('license', 'LicenseController@store');
     Route::patch('license', 'LicenseController@update');
-});
-
-// Eventually remove this route
-Route::get('/phpinfo', function () {
-    return phpinfo();
 });

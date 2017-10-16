@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use Sentry;
 
 class RegisterController extends Controller
 {
@@ -42,9 +43,14 @@ class RegisterController extends Controller
                 return response($errors->first('password'), 422);
             }
 
-            // At least one of the context parameters failed validation. TODO: Report to Sentry.
-            return response('One or more invalid request parameters (script broken?).'
-                . 'The issue has been automatically reported.', 422);
+            // At least one of the context parameters failed validation.
+            $errorMessage = 'Fatal error: one or more invalid request parameters (script broken?)';
+            Sentry::captureMessage($errorMessage, [], [
+                'extra' => ['validation' => $errors->all()],
+                'level' => 'fatal',
+            ]);
+
+            return response($errorMessage . ' The issue has been automatically reported.', 422);
         }
 
         // This lets us determine if we need to make a new record or update an existing one
@@ -60,7 +66,8 @@ class RegisterController extends Controller
         // needs to check an edge case we didn't consider. In that event, report a warning to Sentry
         // so someone can know to patch the script for the future.
         if (!$record->where('username', $request->username)->exists()) {
-            // TODO: report [warning] "record mismatch" to Sentry
+            $errorMessage = 'Username mismatch while updating user by UUID. "%s" does not match "%s"';
+            Sentry::captureMessage($errorMessage, [$request->username, $record->first()->username], 'warning');
         }
 
         // The user is already registered and is resubmitting a new password

@@ -25,7 +25,7 @@ class LslProtected
         $isNgrok = App::environment('local') && $host == 'localhost';
 
         if ($isNgrok) {
-            $hostIps = (array) $request->server('HTTP_X_FORWARDED_FOR');
+            $hostIps = (array)$request->server('HTTP_X_FORWARDED_FOR');
             $host = gethostbyaddr(array_pop($hostIps)); // last IP is the SL server
         }
 
@@ -34,6 +34,7 @@ class LslProtected
             return $next($request);
         }
 
-        abort(404); // TODO: log (but not to Sentry)
+        Log::warning('Detected unauthorized API access (request blocked)', ['request' => $request]);
+        abort(404);
     }
 }

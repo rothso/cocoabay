@@ -179,20 +179,12 @@ return [
         App\Providers\RouteServiceProvider::class,
 
         /*
-         * Laravel IDE helper
+         * Third-Party Service Providers...
          */
         Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class,
-
-        /*
-         * Image processing with Imagick/GD
-         */
         Intervention\Image\ImageServiceProvider::class,
-
-        /*
-         * Debugbar for Laravel
-         */
-        //        Barryvdh\Debugbar\ServiceProvider::class,
-
+        // Barryvdh\Debugbar\ServiceProvider::class,
+        Sentry\SentryLaravel\SentryLaravelServiceProvider::class,
     ],
 
     /*
@@ -242,8 +234,9 @@ return [
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
 
+        // Third-party aliases
         'Image' => Intervention\Image\Facades\Image::class,
-
+        'Sentry' => Sentry\SentryLaravel\SentryFacade::class,
     ],
 
 ];

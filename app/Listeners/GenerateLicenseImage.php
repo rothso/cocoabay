@@ -45,7 +45,7 @@ class GenerateLicenseImage
         // Turn the model data into a format we can display on the license
         $number = $license->formatted_number;
         $dob = $license->dob->format('m-d-Y');
-        $name = substr(strtoupper($holder->name), 0, 20);
+        $name = mb_substr(strtoupper($holder->name), 0, 20, 'UTF-8'); // properly truncate Cyrillic characters
         $address = substr(strtoupper($license->address), 0, 20);
         $sim = substr(strtoupper($license->sim), 0, 20);
         $gender = $license->gender[0]; // get first letter (will be an M or F)
@@ -55,7 +55,7 @@ class GenerateLicenseImage
         $eyeColor = $license->eyeColor->shortcode;
         $createdAt = ($license->created_at ?: Carbon::now())->format('m-d-Y');
         $expiresAt = $license->expires_at->format('m-d-Y');
-        $signature = substr($holder->name, 0, 20);
+        $signature = static::transliterate(mb_substr($holder->name, 0, 20));
 
         // Actual image processing!
         $image = $template
@@ -98,5 +98,21 @@ class GenerateLicenseImage
             $font->align($align);
             $font->color($color);
         };
+    }
+
+    /**
+     * Map cyrillic text into regular text so they may be displayed by all fonts.
+     *
+     * @param string $text
+     * @return string
+     */
+    private static function transliterate($text)
+    {
+        // This table will need to be manually updated to supported additional problematic characters.
+        // TODO: find a third-party library that already has a complete mapping table
+        $cyrillic = ['α', 'ҽ', 'є', 'Ɠ', 'ɠ', 'ԋ', 'ι', 'ƙ', 'ɳ', 'η', 'σ', 'я', 'ɾ', 'ƚ', 'ʋ', 'ω'];
+        $regulars = ['a', 'e', 'e', 'G', 'g', 'h', 'i', 'k', 'n', 'n', 'o', 'r', 'r', 't', 'v', 'w'];
+
+        return str_replace($cyrillic, $regulars, $text);
     }
 }

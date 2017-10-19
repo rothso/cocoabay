@@ -71,7 +71,7 @@
 
                             {{-- Photo --}}
                             <div class="form-group {{ $errors->has('photo') ? 'has-error' : '' }}">
-                                <label class="col-md-4 control-label">Photo</label>
+                                <label class="col-md-4 control-label">Photo<br><span style="color: #999; font-size: 12px">Face Picture Only</span></label>
 
                                 <div class="col-md-6">
                                     {{-- TODO: extract into Vue component --}}
@@ -112,7 +112,7 @@
 
                             {{-- Date of birth --}}
                             <div class="form-group{{ $errors->has('dob') ? ' has-error' : '' }}">
-                                <label for="dob" class="col-md-4 control-label">Date of Birth</label>
+                                <label for="dob" class="col-md-4 control-label">Date of Birth (<abbr title="Roleplay">RP</abbr>)</label>
 
                                 <div class="col-md-6">
                                     <div class="input-group date" id="datepicker">

@@ -18,8 +18,7 @@ class LslProtected
     public function handle($request, Closure $next)
     {
         // We're checking with REMOTE_ADDR because it can't be easily spoofed
-        $hostIp = $request->server('REMOTE_ADDR');
-        $host = gethostbyaddr($hostIp);
+        $host = gethostbyaddr($request->server('REMOTE_ADDR'));
 
         // ngrok is a trusted proxy that runs to provide a sharable public link to our server
         $isNgrok = App::environment('local') && $host == 'localhost';

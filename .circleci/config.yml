@@ -39,7 +39,15 @@ jobs:
 
       - run: cp .env.testing .env
       - run: npm run production
-      - run: vendor/bin/phpunit
+
+      - run:
+          name: Run PHPUnit Tests
+          command: vendor/bin/phpunit
+          environment:
+            # Temporarily unset the SENTRY_DSN variable (automatically imported by dotenv from
+            # the CircleCI environment) so intentional exceptions aren't reported to Sentry.
+            SENTRY_DSN: ""
+
       - run: touch database/testing.sqlite
 
       - run:

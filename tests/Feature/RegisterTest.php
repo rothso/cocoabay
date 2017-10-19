@@ -104,7 +104,7 @@ class RegisterTest extends TestCase
 
     public function testOutsideRequestsShouldFail()
     {
-        $badRemoteIp = '127.0.0.1';
+        $badRemoteIp = '93.184.216.34'; // cannot use 127.0.0.1 for some reason
 
         $response = $this
             ->withServerVariables(['REMOTE_ADDR' => $badRemoteIp])

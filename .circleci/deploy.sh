@@ -18,8 +18,7 @@ if [ ! -d "cocoabay" ]; then
 else
     cd ~/cocoabay
 
-    # Get rid of outstanding changes, as they cause pulls to abort.
-    git checkout -- public/css/app.css public/js/app.js public/mix-manifest.json
+    # Get rid of any local changes, as they cause pulls to abort.
     git stash
 
     git pull

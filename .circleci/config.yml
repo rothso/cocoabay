@@ -20,7 +20,6 @@ jobs:
             - composer-v1-{{ checksum "composer.json" }}
             - composer-v1-
       - run: composer install -n --prefer-dist --ignore-platform-reqs
-      - run: composer require marcin-orlowski/process-dotenv
       - save_cache:
           key: composer-v1-{{ checksum "composer.json" }}
           paths:
@@ -34,9 +33,6 @@ jobs:
           key: dependency-cache-{{ checksum "package.json" }}
           paths:
             - node_modules
-
-      - store_artifacts:
-          path: tests/Browser/screenshots
 
       - run: npm run production
 
@@ -63,6 +59,12 @@ jobs:
       - run:
           name: Run Laravel Dusk Tests
           command: php artisan dusk
+
+      # Upload Dusk artifacts
+      - store_artifacts:
+          path: tests/Browser/screenshots
+      - store_artifacts:
+          path: tests/Browser/console
 
       - deploy:
           name: Deploy to HostGator

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "c67665a46e58b6c2bc619ecd1e766fd1",
+    "content-hash": "5ff62f307016f73e561193f81b66c854",
     "packages": [
         {
             "name": "dnoegel/php-xdg-base-dir",
@@ -3337,6 +3337,52 @@
                 "webdriver"
             ],
             "time": "2017-10-09T16:10:59+00:00"
+        },
+        {
+            "name": "marcin-orlowski/process-dotenv",
+            "version": "1.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/MarcinOrlowski/process-dotenv.git",
+                "reference": "d6d2a0444d1da30c39b2b70f37673ac25b4093ea"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/MarcinOrlowski/process-dotenv/zipball/d6d2a0444d1da30c39b2b70f37673ac25b4093ea",
+                "reference": "d6d2a0444d1da30c39b2b70f37673ac25b4093ea",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.1.2"
+            },
+            "require-dev": {
+                "marcin-orlowski/coding-standard": "^1.0"
+            },
+            "bin": [
+                "bin/process-dotenv"
+            ],
+            "type": "library",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Marcin Orlowski"
+                }
+            ],
+            "description": "Little tool to help build DotEnv (.env) files from templates",
+            "keywords": [
+                "ci",
+                "continous-integration",
+                "dev-tools",
+                "dotenv",
+                "helper",
+                "laravel",
+                "teamcity",
+                "travis"
+            ],
+            "time": "2017-08-11T13:51:51+00:00"
         },
         {
             "name": "maximebf/debugbar",

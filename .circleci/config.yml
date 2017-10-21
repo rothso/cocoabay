@@ -12,6 +12,7 @@ jobs:
       - run: sudo docker-php-ext-configure gd --enable-gd-native-ttf --with-freetype-dir=/usr/include/freetype2 --with-png-dir=/usr/include --with-jpeg-dir=/usr/include
       - run: sudo docker-php-ext-install gd
       - run: sudo docker-php-ext-install zip
+      - run: cp .env.testing .env
 
       # Composer
       - restore_cache:
@@ -37,7 +38,6 @@ jobs:
       - store_artifacts:
           path: tests/Browser/screenshots
 
-      - run: cp .env.testing .env
       - run: npm run production
 
       - run:

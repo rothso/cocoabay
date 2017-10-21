@@ -32,8 +32,7 @@ echo "Syncing .env file"
 cp /tmp/.env .env
 
 # Laravel stuff
-composer.phar install --optimize-autoloader
-composer.phar dump-autoload
+composer.phar install --no-dev
 npm install
 npm run production
 php artisan config:cache

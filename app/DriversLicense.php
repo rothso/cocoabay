@@ -21,7 +21,7 @@ class DriversLicense extends Model
         'is_expired'
     ];
 
-    protected $events = [
+    protected $dispatchesEvents = [
         'creating' => DriversLicenseSaving::class,
         'updating' => DriversLicenseSaving::class,
     ];

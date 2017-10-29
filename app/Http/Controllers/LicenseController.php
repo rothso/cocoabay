@@ -53,7 +53,7 @@ class LicenseController extends Controller
         $license = new DriversLicense;
         $license->fill($this->prepareParams($request));
         $license->photo = $request->file('photo')->store('license/photos', 'public'); // TODO: extract logic
-        $license->user()->associate(Auth::user());
+        $license->user()->associate($user);
         $license->save();
 
         $request->session()->flash('alert-success', 'License successfully created!');

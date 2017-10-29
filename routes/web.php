@@ -28,7 +28,12 @@ Route::get('/home', 'HomeController@index')->name('home');
 // DMV Routes...
 Route::prefix('dmv')->group(function () {
     Route::get('/', 'DmvController@index')->name('dmv');
+
+    // Drivers Licenses
     Route::get('license', 'LicenseController@create')->name('license');
     Route::post('license', 'LicenseController@store');
     Route::patch('license', 'LicenseController@update');
+
+    // Vehicle registration
+    Route::resource('plate', 'LicensePlateController', ['only' => ['store', 'update']]);
 });

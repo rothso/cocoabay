@@ -35,4 +35,13 @@ class User extends Authenticatable
     public function license() {
         return $this->hasOne('App\DriversLicense');
     }
+
+    /**
+     * Each user can have an unlimited number of license plates.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function plates() {
+        return $this->hasMany('App\LicensePlate');
+    }
 }

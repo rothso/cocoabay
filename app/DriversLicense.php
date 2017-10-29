@@ -36,8 +36,7 @@ class DriversLicense extends Model
             $license->expires_at = $license->expires_at ?: Carbon::now()->addDays(90);
         });
     }
-
-
+    
     public function user()
     {
         return $this->belongsTo('App\User');

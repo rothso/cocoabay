@@ -20,14 +20,22 @@ class LicensePlateFeatureTest extends TestCase
         Storage::fake('public');
     }
 
-    public function _testUserCanSeeForm()
+    public function testUserCanSeeForm()
     {
-        //
+        $user = factory(User::class)->create();
+
+        // View the page as a user
+        $this->actingAs($user)
+            ->get('dmv/plate/create')
+            ->assertStatus(200)
+            ->assertSeeText('Submit');
     }
 
-    public function _testGuestCannotSeeForm()
+    public function testGuestCannotSeeForm()
     {
-        //
+        // View the page while unauthenticated
+        $this->get('dmv/plate/create')
+            ->assertRedirect('login');
     }
 
     public function testUserCanAddLicensePlate()
@@ -36,16 +44,14 @@ class LicensePlateFeatureTest extends TestCase
         $validData = $this->newValidData();
 
         // Create a license plate
-        $response = $this->actingAs($user)
-            ->post('dmv/plate', $validData);
+        $this->actingAs($user)
+            ->post('dmv/plate', $validData)
+            ->assertStatus(200)
+            ->assertSeeText('Success');
 
         // Record should appear in the database
         array_merge($validData, ['user_id' => $user->id]);
         $this->assertDatabaseHas('license_plates', $validData);
-
-        // User should see a success message
-        $response->assertStatus(200);
-        $response->assertSeeText('Success');
     }
 
     public function testUserCanAddMultiplePlates()
@@ -84,15 +90,13 @@ class LicensePlateFeatureTest extends TestCase
         ];
 
         // Attempt to create a license plate as that user
-        $response = $this->actingAs($user)
-            ->post('dmv/plate', $invalidData);
+        $this->actingAs($user)
+            ->post('dmv/plate', $invalidData)
+            ->assertRedirect()
+            ->assertSessionHasErrors(array_keys($invalidData));
 
         // Record should not appear in database
         $this->assertDatabaseMissing('drivers_licenses', $invalidData);
-
-        // Validator should catch the errors
-        $response->assertRedirect();
-        $response->assertSessionHasErrors(array_keys($invalidData));
     }
 
     public function testGuestCannotAddLicensePlate()
@@ -100,49 +104,77 @@ class LicensePlateFeatureTest extends TestCase
         $validData = $this->newValidData();
 
         // Attempt to create license plate while unauthenticated
-        $response = $this->post('dmv/plate', $validData);
+        $this->post('dmv/plate', $validData)
+            ->assertRedirect('login');
 
         // Record should not appear in database
         $this->assertDatabaseMissing('drivers_licenses', $validData);
-
-        // Should redirect to login page
-        $response->assertRedirect('login');
     }
 
-    public function _testOwnerCanViewExistingPlate()
+    public function testOwnerCanViewExistingPlate()
     {
-        //
+        $user = factory(User::class)->create();
+        $plate = factory(LicensePlate::class)->create(['user_id' => $user->id]);
+
+        // View the new plate
+        $this->actingAs($user)
+            ->get('dmv/plate/1')
+            ->assertStatus(200)
+            ->assertSeeText("{$plate->tag}");
+    }
+
+    public function testStrangerCannotViewUnownedPlate()
+    {
+        $user = factory(User::class)->create();
+        $stranger = factory(User::class)->create();
+        $plate = factory(LicensePlate::class)->create(['user_id' => $user->id]);
+
+        // Attempt to view the new plate as another user
+        $this->actingAs($stranger)
+            ->get("dmv/plate/{$plate->id}")
+            ->assertStatus(403);
     }
 
     public function testOwnerCanUpdateExistingPlate()
     {
-        // Create a new user
         $user = factory(User::class)->create();
 
         $validData = $this->newValidData();
-        $patchData = array_replace($validData, ['color' => 'some color']);
+        $patchData = $this->newValidData();
 
-        // Create a license plate and update it
+        // Create a license plate
         $this->actingAs($user)->post('dmv/plate', $validData);
-        $response = $this->patch('dmv/plate/1', $patchData);
+
+        // Update the license plate
+        $this->patch('dmv/plate/1', $patchData)
+            ->assertStatus(200)
+            ->assertSeeText('Updated');
 
         // Only the newest record should appear in the database
         $this->assertDatabaseMissing('license_plates', $validData);
         $this->assertDatabaseHas('license_plates', $patchData);
-
-        // User should see a success message
-        $response->assertStatus(200);
-        $response->assertSeeText('Updated');
     }
 
-    public function _testStrangerCannotViewUnownedPlate()
+    public function testStrangerCannotUpdateUnownedPlate()
     {
-        //
-    }
+        $user = factory(User::class)->create();
+        $stranger = factory(User::class)->create();
 
-    public function _testStrangerCannotUpdateUnownedPlate()
-    {
-        //
+        $validData = $this->newValidData();
+        $patchData = $this->newValidData();
+
+        // Create a license plate
+        $this->actingAs($user)->post('dmv/plate', $validData);
+
+        // Try to update it as another user
+        $this->actingAs($stranger)
+            ->patch('dmv/plate/1', $patchData)
+            ->assertStatus(403)
+            ->assertDontSeeText('Updated');
+
+        // The record should remain unchanged
+        $this->assertDatabaseHas('license_plates', $validData);
+        $this->assertDatabaseMissing('license_plates', $patchData);
     }
 
     /**

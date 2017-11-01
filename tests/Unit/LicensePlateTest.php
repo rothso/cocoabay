@@ -18,7 +18,6 @@ class LicensePlateTest extends TestCase
         Carbon::setTestNow(Carbon::now());
     }
 
-
     public function testDirtySaveShouldGenerateAndSaveImage()
     {
         //

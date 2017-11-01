@@ -9,8 +9,6 @@ class LicensePlateController extends Controller
 {
     /**
      * Instantiate a new controller instance.
-     *
-     * @return void
      */
     public function __construct()
     {
@@ -19,8 +17,6 @@ class LicensePlateController extends Controller
 
     /**
      * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
      */
     public function index()
     {
@@ -29,12 +25,10 @@ class LicensePlateController extends Controller
 
     /**
      * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
      */
     public function create()
     {
-        //
+        return response('Submit');
     }
 
     /**
@@ -56,21 +50,23 @@ class LicensePlateController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  LicensePlate $licensePlate
+     * @param LicensePlate $plate
      * @return \Illuminate\Http\Response
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function show(LicensePlate $licensePlate)
+    public function show(LicensePlate $plate)
     {
-        //
+        $this->authorize('view', $plate);
+
+        return response($plate->tag);
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  LicensePlate $licensePlate
-     * @return \Illuminate\Http\Response
+     * @param  LicensePlate $plate
      */
-    public function edit(LicensePlate $licensePlate)
+    public function edit(LicensePlate $plate)
     {
         //
     }
@@ -81,9 +77,12 @@ class LicensePlateController extends Controller
      * @param LicensePlateRequest $request
      * @param LicensePlate $plate
      * @return \Illuminate\Http\Response
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function update(LicensePlateRequest $request, LicensePlate $plate)
     {
+        $this->authorize('update', $plate);
+
         $plate->update($request->all());
         return response('Updated');
     }
@@ -91,10 +90,9 @@ class LicensePlateController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  LicensePlate $licensePlate
-     * @return \Illuminate\Http\Response
+     * @param  LicensePlate $plate
      */
-    public function destroy(LicensePlate $licensePlate)
+    public function destroy(LicensePlate $plate)
     {
         //
     }

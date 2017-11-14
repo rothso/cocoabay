@@ -18,13 +18,10 @@ $factory->define(App\LicensePlate::class, function (Faker $faker) {
         'style_id' => function () {
             return factory(App\LicensePlateStyle::class)->create()->id;
         },
-        'tag' => $faker->unique()->randomNumber(8),
         'make' => 'Toyota',
-        'model' => 'Camary',
+        'model' => 'Camry',
         'class' => 'Sedan',
         'color' => $faker->colorName,
         'year' => $faker->year,
-        'image' => $faker->image(),
-        'expires_at' => \Carbon\Carbon::now()->addDays(90),
     ];
 });

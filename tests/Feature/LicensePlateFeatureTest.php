@@ -20,7 +20,10 @@ class LicensePlateFeatureTest extends TestCase
         Storage::fake('public');
     }
 
-    public function testUserCanSeeForm()
+    // TODO: show all licenses on GET index (if authenticated)
+    // TODO: show edit form on GET {plate} (if owner)
+
+    public function testUserCanSeeCreateForm()
     {
         $user = factory(User::class)->create();
 
@@ -31,7 +34,7 @@ class LicensePlateFeatureTest extends TestCase
             ->assertSeeText('Submit');
     }
 
-    public function testGuestCannotSeeForm()
+    public function testGuestCannotSeeCreateForm()
     {
         // View the page while unauthenticated
         $this->get('dmv/plate/create')
@@ -120,7 +123,7 @@ class LicensePlateFeatureTest extends TestCase
         $this->actingAs($user)
             ->get('dmv/plate/1')
             ->assertStatus(200)
-            ->assertSeeText("{$plate->tag}");
+            ->assertSeeText("{$plate->tag}"); // TODO: see all fields
     }
 
     public function testStrangerCannotViewUnownedPlate()

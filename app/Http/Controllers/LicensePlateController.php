@@ -40,8 +40,6 @@ class LicensePlateController extends Controller
     public function store(LicensePlateRequest $request)
     {
         $plate = new LicensePlate($request->all());
-        $plate->tag = uniqid();
-        $plate->image = uniqid();
 
         $request->user()->plates()->save($plate);
         return response('Success');

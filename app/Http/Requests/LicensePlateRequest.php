@@ -29,7 +29,7 @@ class LicensePlateRequest extends FormRequest
             'model' => 'required|string',
             'class' => 'required|string',
             'color' => 'required|string',
-            'year' => 'required|date_format:Y|before:today',
+            'year' => 'required|date_format:Y|before:next year',
         ];
     }
 }

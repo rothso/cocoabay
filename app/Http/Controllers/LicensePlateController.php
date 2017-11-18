@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\LicensePlateRequest;
 use App\LicensePlate;
+use App\User;
+use Illuminate\Support\Facades\Request;
 
 class LicensePlateController extends Controller
 {
@@ -28,7 +30,7 @@ class LicensePlateController extends Controller
      */
     public function create()
     {
-        return response('Submit');
+        return view('dmv.plate.create');
     }
 
     /**
@@ -40,9 +42,11 @@ class LicensePlateController extends Controller
     public function store(LicensePlateRequest $request)
     {
         $plate = new LicensePlate($request->all());
-
         $request->user()->plates()->save($plate);
-        return response('Success');
+
+        return redirect()
+            ->route('plate.show', $plate)
+            ->with('success', 'Vehicle registered successfully!');
     }
 
     /**
@@ -56,7 +60,7 @@ class LicensePlateController extends Controller
     {
         $this->authorize('view', $plate);
 
-        return response($plate->tag);
+        return view('dmv.plate.show', compact('plate'));
     }
 
     /**

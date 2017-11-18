@@ -31,7 +31,7 @@ class LicensePlateFeatureTest extends TestCase
         $this->actingAs($user)
             ->get('dmv/plate/create')
             ->assertStatus(200)
-            ->assertSeeText('Submit');
+            ->assertSeeText('Register Vehicle');
     }
 
     public function testGuestCannotSeeCreateForm()
@@ -49,8 +49,8 @@ class LicensePlateFeatureTest extends TestCase
         // Create a license plate
         $this->actingAs($user)
             ->post('dmv/plate', $validData)
-            ->assertStatus(200)
-            ->assertSeeText('Success');
+            ->assertRedirect('dmv/plate/1')
+            ->assertSessionHas('success');
 
         // Record should appear in the database
         array_merge($validData, ['user_id' => $user->id]);
@@ -89,7 +89,7 @@ class LicensePlateFeatureTest extends TestCase
             'model' => '', // missing
             'class' => '', // missing
             'color' => '', // missing
-            'year' => 'asdf', // bad format
+            'year' => '2100', // too new
         ];
 
         // Attempt to create a license plate as that user

@@ -1,6 +1,7 @@
 <?php
 
 use Faker\Generator as Faker;
+use App\Helpers\Faker\NoisyImageGenerator;
 
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 $factory->define(App\LicensePlateStyle::class, function (Faker $faker) {

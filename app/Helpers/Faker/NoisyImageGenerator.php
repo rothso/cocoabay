@@ -1,11 +1,12 @@
 <?php
 
+namespace App\Helpers\Faker;
+
 use Faker\Provider\Image;
 use Illuminate\Http\Testing\File;
 
 class NoisyImageGenerator extends Image
 {
-
     public static function noisyImage($width = 640, $height = 480)
     {
         if (!extension_loaded('gd')) {
@@ -31,7 +32,6 @@ class NoisyImageGenerator extends Image
                 }
             }
 
-            header('Content-Type: image/png');
             imagepng($image);
 
             fwrite($temp, ob_get_clean());

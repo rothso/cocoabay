@@ -14,15 +14,12 @@
             <div class="form-group">
                 <label class="col-md-4 control-label">Style</label>
                 <div class="col-md-6">
+                    @foreach($styles as $style)
                     <label class="radio-inline">
-                        <input type="radio" name="style_id" value="1"> NYC
+                        <input type="radio" name="style_id" value="{{ $style->id }}" required> {{ $style-> name }}
+                        <img src="{{ asset($style->image) }}">
                     </label>
-                    <label class="radio-inline">
-                        <input type="radio" name="style_id" value="2"> State
-                    </label>
-                    <label class="radio-inline">
-                        <input type="radio" name="style_id" value="3"> Police
-                    </label>
+                    @endforeach
                 </div>
             </div>
 
@@ -30,7 +27,7 @@
             <div class="form-group">
                 <label for="make" class="col-md-4 control-label">Make</label>
                 <div class="col-md-6">
-                    <input id="make" class="form-control" name="make">
+                    <input id="make" class="form-control" name="make" required>
                 </div>
             </div>
 
@@ -38,7 +35,7 @@
             <div class="form-group">
                 <label for="model" class="col-md-4 control-label">Model</label>
                 <div class="col-md-6">
-                    <input id="model" class="form-control" name="model">
+                    <input id="model" class="form-control" name="model" required>
                 </div>
             </div>
 
@@ -46,7 +43,7 @@
             <div class="form-group">
                 <label for="class" class="col-md-4 control-label">Class</label>
                 <div class="col-md-6">
-                    <input id="class" class="form-control" name="class">
+                    <input id="class" class="form-control" name="class" required>
                 </div>
             </div>
             
@@ -54,7 +51,7 @@
             <div class="form-group">
                 <label for="color" class="col-md-4 control-label">Model</label>
                 <div class="col-md-6">
-                    <input id="color" class="form-control" name="color">
+                    <input id="color" class="form-control" name="color" required>
                 </div>
             </div>
 
@@ -62,7 +59,7 @@
             <div class="form-group">
                 <label for="year" class="col-md-4 control-label">Year</label>
                 <div class="col-md-6">
-                    <input id="year" type="number" class="form-control" name="year">
+                    <input id="year" type="number" class="form-control" name="year" required>
                 </div>
             </div>
 

@@ -4,9 +4,11 @@ use Faker\Generator as Faker;
 
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 $factory->define(App\LicensePlateStyle::class, function (Faker $faker) {
+    $faker->addProvider(new NoisyImageGenerator($faker));
+
     return [
-        'name' => $faker->word,
-        'image' => $faker->image(),
+        'name' => $faker->unique()->word,
+        'image' => $faker->noisyImage(200, 50)->store('license/plate/styles', 'public'),
     ];
 });
 

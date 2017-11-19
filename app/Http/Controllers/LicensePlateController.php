@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\LicensePlateRequest;
 use App\LicensePlate;
+use App\LicensePlateStyle;
 use App\User;
 use Illuminate\Support\Facades\Request;
 
@@ -30,7 +31,8 @@ class LicensePlateController extends Controller
      */
     public function create()
     {
-        return view('dmv.plate.create');
+        $styles = LicensePlateStyle::select('id', 'name', 'image')->get();
+        return view('dmv.plate.create', compact('styles'));
     }
 
     /**

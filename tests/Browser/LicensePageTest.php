@@ -4,6 +4,7 @@ namespace Tests\Browser;
 
 use App\User;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Illuminate\Support\Facades\Storage;
 use Laravel\Dusk\Browser;
 use Tests\DuskTestCase;
 
@@ -20,6 +21,9 @@ class LicensePageTest extends DuskTestCase
     public function setUp()
     {
         parent::setUp();
+
+        // Avoid polluting the storage with test drivers licenses
+        Storage::fake('public');
 
         $this->user = User::create([
             'uuid' => 'e5668cc3-c9bd-4b1f-9c40-5a66009aadde',

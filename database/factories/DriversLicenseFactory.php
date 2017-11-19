@@ -1,12 +1,10 @@
 <?php
 
 use Faker\Generator as Faker;
-use Illuminate\Http\UploadedFile;
 
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 $factory->define(App\DriversLicense::class, function (Faker $faker) {
-    // Each photo will be a different size to ensure the hashes are unique
-    $dimen =  $faker->unique()->numberBetween(0, 200);
+    $faker->addProvider(new NoisyImageGenerator($faker));
 
     return [
         'user_id' => function () {
@@ -21,7 +19,7 @@ $factory->define(App\DriversLicense::class, function (Faker $faker) {
         'hair_color_id' => $faker->randomElement(\App\HairColor::pluck('id')->all()),
         'address' => $faker->streetAddress,
         'sim' => $faker->city,
-        'photo' => UploadedFile::fake()->image('test.png', $dimen, $dimen)->store('license/photo', 'public'),
+        'photo' => $faker->noisyImage(100, 100)->store('license/photo', 'public'),
         'expires_at' => $faker->dateTimeBetween('now', '90 days'),
     ];
 });

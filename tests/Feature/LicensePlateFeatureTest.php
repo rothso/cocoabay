@@ -114,6 +114,22 @@ class LicensePlateFeatureTest extends TestCase
         $this->assertDatabaseMissing('drivers_licenses', $validData);
     }
 
+    public function testOwnerCanViewAllPlates()
+    {
+        $user = factory(User::class)->create();
+        $plates = factory(LicensePlate::class, 3)->create(['user_id' => $user->id]);
+
+        $response = $this->actingAs($user)
+            ->get('dmv/plate')
+            ->assertStatus(200);
+
+        foreach ($plates as $plate) {
+            $response->assertSeeText($plate->tag)
+                ->assertSeeText($plate->make)
+                ->assertSeeText($plate->model);
+        }
+    }
+
     public function testOwnerCanViewExistingPlate()
     {
         $user = factory(User::class)->create();
@@ -123,7 +139,9 @@ class LicensePlateFeatureTest extends TestCase
         $this->actingAs($user)
             ->get('dmv/plate/1')
             ->assertStatus(200)
-            ->assertSeeText("{$plate->tag}"); // TODO: see all fields
+            ->assertSeeText($plate->tag)
+            ->assertSeeText($plate->make)
+            ->assertSeeText($plate->model);
     }
 
     public function testStrangerCannotViewUnownedPlate()

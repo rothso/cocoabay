@@ -5,8 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\LicensePlateRequest;
 use App\LicensePlate;
 use App\LicensePlateStyle;
-use App\User;
-use Illuminate\Support\Facades\Request;
+use Illuminate\Http\Request;
 
 class LicensePlateController extends Controller
 {
@@ -20,10 +19,14 @@ class LicensePlateController extends Controller
 
     /**
      * Display a listing of the resource.
+     *
+     * @param Request $request
+     * @return \Illuminate\View\View
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $plates = $request->user()->plates;
+        return view('dmv.plate.index', compact('plates'));
     }
 
     /**

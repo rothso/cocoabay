@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Helpers\Faker\NoisyImageGenerator;
 use Illuminate\Database\Eloquent\Model;
 use Storage;
 
@@ -30,9 +31,7 @@ class LicensePlate extends Model
         // TODO: move to event handler class
         $drawPlate = function ($plate) {
             // TODO: generate real license plate image
-            $image = \Illuminate\Http\UploadedFile::fake()
-                ->image('test.png', random_int(1, 100), random_int(1, 100))
-                ->store('license/plate', 'public');
+            $image = NoisyImageGenerator::noisyImage()->store('license/plate', 'public');
 
             if ($plate->image != null) {
                 Storage::disk('public')->delete($plate->image);

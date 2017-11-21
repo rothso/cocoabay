@@ -35,5 +35,5 @@ Route::prefix('dmv')->group(function () {
     Route::patch('license', 'LicenseController@update');
 
     // Vehicle registration
-    Route::resource('plate', 'LicensePlateController', ['except' => ['index', 'edit', 'destroy']]);
+    Route::resource('plate', 'LicensePlateController', ['except' => ['edit', 'destroy']]);
 });

@@ -2,6 +2,7 @@
 
 namespace Tests\Browser;
 
+use App\LicensePlate;
 use App\LicensePlateStyle;
 use App\User;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
@@ -91,5 +92,36 @@ class LicensePlateBrowserTest extends DuskTestCase
         $this->assertDatabaseMissing('license_plates', [
             'user_id' => $user->id
         ]);
+    }
+
+    public function testOwnerCanSeeListingOfAllPlates()
+    {
+        $user = factory(User::class)->create();
+        $plates = factory(LicensePlate::class, 3)->create(['user_id' => $user->id]);
+
+        $this->browse(function (Browser $browser) use ($user, $plates) {
+            $browser->loginAs($user)
+                ->visit('/dmv/plate');
+
+            foreach ($plates as $plate) {
+                $browser->assertSee($plate->tag)
+                    ->assertSee($plate->make)
+                    ->assertSee($plate->model);
+            }
+        });
+    }
+
+    public function testOwnerCanSeeSpecificPlateDetails()
+    {
+        $user = factory(User::class)->create();
+        $plate = factory(LicensePlate::class)->create();
+
+        $this->browse(function (Browser $browser) use ($user, $plate) {
+            $browser->loginAs($user)
+                ->visit('/dmv/plate/1')
+                ->assertSee($plate->tag)
+                ->assertSee($plate->make)
+                ->assertSee($plate->model);
+        });
     }
 }

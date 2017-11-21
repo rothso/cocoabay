@@ -20,7 +20,6 @@ class LicensePlateFeatureTest extends TestCase
         Storage::fake('public');
     }
 
-    // TODO: show all licenses on GET index (if authenticated)
     // TODO: show edit form on GET {plate} (if owner)
 
     public function testUserCanSeeCreateForm()
@@ -117,31 +116,24 @@ class LicensePlateFeatureTest extends TestCase
     public function testOwnerCanViewAllPlates()
     {
         $user = factory(User::class)->create();
-        $plates = factory(LicensePlate::class, 3)->create(['user_id' => $user->id]);
+        factory(LicensePlate::class, 3)->create(['user_id' => $user->id]);
 
-        $response = $this->actingAs($user)
+        $this->actingAs($user)
             ->get('dmv/plate')
-            ->assertStatus(200);
-
-        foreach ($plates as $plate) {
-            $response->assertSeeText($plate->tag)
-                ->assertSeeText($plate->make)
-                ->assertSeeText($plate->model);
-        }
+            ->assertStatus(200)
+            ->assertViewHas('plates', $user->plates);
     }
 
     public function testOwnerCanViewExistingPlate()
     {
         $user = factory(User::class)->create();
-        $plate = factory(LicensePlate::class)->create(['user_id' => $user->id]);
+        factory(LicensePlate::class)->create(['user_id' => $user->id]);
 
         // View the new plate
         $this->actingAs($user)
             ->get('dmv/plate/1')
             ->assertStatus(200)
-            ->assertSeeText($plate->tag)
-            ->assertSeeText($plate->make)
-            ->assertSeeText($plate->model);
+            ->assertViewHas('plate', $user->plates()->find(1));
     }
 
     public function testStrangerCannotViewUnownedPlate()

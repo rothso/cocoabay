@@ -2,8 +2,8 @@
 
 namespace App\Policies;
 
-use App\User;
 use App\LicensePlate;
+use App\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class LicensePlatePolicy
@@ -19,7 +19,7 @@ class LicensePlatePolicy
      */
     public function view(User $user, LicensePlate $licensePlate)
     {
-        return $user->id === $licensePlate->id;
+        return $user->id == $licensePlate->user_id;
     }
 
     /**
@@ -31,7 +31,7 @@ class LicensePlatePolicy
      */
     public function update(User $user, LicensePlate $licensePlate)
     {
-        return $user->id === $licensePlate->id;
+        return $user->id == $licensePlate->user_id;
     }
 
     /**

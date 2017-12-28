@@ -7,8 +7,8 @@ use App\LicensePlateStyle;
 use App\User;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Support\Facades\Storage;
-use Tests\DuskTestCase;
 use Laravel\Dusk\Browser;
+use Tests\DuskTestCase;
 
 class LicensePlateBrowserTest extends DuskTestCase
 {
@@ -114,7 +114,7 @@ class LicensePlateBrowserTest extends DuskTestCase
     public function testOwnerCanSeeSpecificPlateDetails()
     {
         $user = factory(User::class)->create();
-        $plate = factory(LicensePlate::class)->create();
+        $plate = factory(LicensePlate::class)->create(['user_id' => $user->id]);
 
         $this->browse(function (Browser $browser) use ($user, $plate) {
             $browser->loginAs($user)

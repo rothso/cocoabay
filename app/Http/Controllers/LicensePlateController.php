@@ -21,7 +21,6 @@ class LicensePlateController extends Controller
      * Display a listing of the resource.
      *
      * @param Request $request
-     * @return \Illuminate\View\View
      */
     public function index(Request $request)
     {
@@ -34,7 +33,9 @@ class LicensePlateController extends Controller
      */
     public function create()
     {
-        $styles = LicensePlateStyle::select('id', 'name', 'image')->get();
+        $styles = LicensePlateStyle::select(['id', 'name', 'image'])->get()->keyBy('id')->map(function ($style) {
+            return e($style->name) . ' <img src="' . asset($style->image) . '">';
+        });
         return view('dmv.plate.create', compact('styles'));
     }
 
@@ -42,7 +43,6 @@ class LicensePlateController extends Controller
      * Store a newly created resource in storage.
      *
      * @param LicensePlateRequest $request
-     * @return \Illuminate\Http\Response
      */
     public function store(LicensePlateRequest $request)
     {
@@ -58,8 +58,6 @@ class LicensePlateController extends Controller
      * Display the specified resource.
      *
      * @param LicensePlate $plate
-     * @return \Illuminate\Http\Response
-     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function show(LicensePlate $plate)
     {
@@ -83,8 +81,6 @@ class LicensePlateController extends Controller
      *
      * @param LicensePlateRequest $request
      * @param LicensePlate $plate
-     * @return \Illuminate\Http\Response
-     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function update(LicensePlateRequest $request, LicensePlate $plate)
     {

@@ -4,9 +4,9 @@ namespace Tests\Feature;
 
 use App\LicensePlate;
 use App\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Storage;
 use Tests\TestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class LicensePlateFeatureTest extends TestCase
 {
@@ -20,20 +20,17 @@ class LicensePlateFeatureTest extends TestCase
         Storage::fake('public');
     }
 
-    // TODO: show edit form on GET {plate} (if owner)
-
-    public function testUserCanSeeCreateForm()
+    public function testUserCanAccessCreateForm()
     {
         $user = factory(User::class)->create();
 
         // View the page as a user
         $this->actingAs($user)
             ->get('dmv/plate/create')
-            ->assertStatus(200)
-            ->assertSeeText('Register Vehicle');
+            ->assertStatus(200);
     }
 
-    public function testGuestCannotSeeCreateForm()
+    public function testGuestCannotAccessCreateForm()
     {
         // View the page while unauthenticated
         $this->get('dmv/plate/create')
@@ -161,7 +158,7 @@ class LicensePlateFeatureTest extends TestCase
         // Update the license plate
         $this->patch('dmv/plate/1', $patchData)
             ->assertStatus(200)
-            ->assertSeeText('Updated');
+            ->assertSeeText('Updated'); // TODO: assert redirect to plate
 
         // Only the newest record should appear in the database
         $this->assertDatabaseMissing('license_plates', $validData);
@@ -182,8 +179,7 @@ class LicensePlateFeatureTest extends TestCase
         // Try to update it as another user
         $this->actingAs($stranger)
             ->patch('dmv/plate/1', $patchData)
-            ->assertStatus(403)
-            ->assertDontSeeText('Updated');
+            ->assertStatus(403);
 
         // The record should remain unchanged
         $this->assertDatabaseHas('license_plates', $validData);

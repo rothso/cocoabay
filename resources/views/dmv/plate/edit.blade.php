@@ -3,9 +3,9 @@
 @section('content')
 <div class="container">
     <div class="row">
-        @include('partials.messages')
-        <h1>Viewing plate <b>{{ $plate->tag }}</b>.</h1>
+        <h1>Editing plate <b>{{ $plate->tag }}</b></h1>
         <p>Vehicle: {{ $plate->make }} {{ $plate->model }}</p>
+        @include('dmv.plate._form', ['submit' => 'Update Vehicle'])
     </div>
 </div>
 @endsection

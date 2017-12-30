@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\LicensePlateRequest;
 use App\LicensePlate;
 use App\LicensePlateStyle;
+use Auth;
 use Illuminate\Http\Request;
 
 class LicensePlateController extends Controller
@@ -33,10 +34,9 @@ class LicensePlateController extends Controller
      */
     public function create()
     {
-        $styles = LicensePlateStyle::select(['id', 'name', 'image'])->get()->keyBy('id')->map(function ($style) {
-            return e($style->name) . ' <img src="' . asset($style->image) . '">';
-        });
-        return view('dmv.plate.create', compact('styles'));
+        $plate = new LicensePlate(); // required for model binding
+        $styles = $this->getStyleOptions();
+        return view('dmv.plate.create', compact('plate', 'styles'));
     }
 
     /**
@@ -61,9 +61,9 @@ class LicensePlateController extends Controller
      */
     public function show(LicensePlate $plate)
     {
-        $this->authorize('view', $plate);
-
-        return view('dmv.plate.show', compact('plate'));
+        return Auth::user()->can('view', $plate)
+            ? view('dmv.plate.show', compact('plate'))
+            : abort(404); // treated like a nonexistent resource
     }
 
     /**
@@ -73,7 +73,11 @@ class LicensePlateController extends Controller
      */
     public function edit(LicensePlate $plate)
     {
-        //
+        $styles = $this->getStyleOptions();
+
+        return Auth::user()->can('update', $plate)
+            ? view('dmv.plate.edit', compact('plate', 'styles'))
+            : abort(404);
     }
 
     /**
@@ -98,5 +102,13 @@ class LicensePlateController extends Controller
     public function destroy(LicensePlate $plate)
     {
         //
+    }
+
+    private function getStyleOptions()
+    {
+        // Radio button data, mapped as [id => html]
+        return LicensePlateStyle::get(['id', 'name', 'image'])->keyBy('id')->map(function ($style) {
+            return e($style->name) . ' <img src="' . asset($style->image) . '">';
+        });
     }
 }

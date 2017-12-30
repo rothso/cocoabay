@@ -3,6 +3,7 @@
 @section('content')
 <div class="container">
     <div class="row">
+        @include('partials.messages')
         All license plates: <br>
         @foreach($plates as $plate)
             {{-- TODO: link to plate --}}

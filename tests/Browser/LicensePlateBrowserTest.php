@@ -29,7 +29,7 @@ class LicensePlateBrowserTest extends DuskTestCase
 
         $this->browse(function (Browser $browser) use ($user, $styles) {
             $browser->loginAs($user)
-                ->visit('/dmv/plate/create');
+                ->visit(route('plate.create'));
 
             foreach ($styles as $style) {
                 $browser->assertSee($style->name)
@@ -43,10 +43,10 @@ class LicensePlateBrowserTest extends DuskTestCase
     {
         $user = factory(User::class)->create();
         $style = factory(LicensePlateStyle::class)->create();
-        
+
         $this->browse(function (Browser $browser) use ($user, $style) {
             $browser->loginAs($user)
-                ->visit('/dmv/plate/create')
+                ->visit(route('plate.create'))
                 ->radio('style_id', $style->id)
                 ->type('make', 'Toyota')
                 ->type('model', 'Camry')
@@ -77,7 +77,7 @@ class LicensePlateBrowserTest extends DuskTestCase
 
         $this->browse(function (Browser $browser) use ($user, $style) {
             $browser->loginAs($user)
-                ->visit('/dmv/plate/create')
+                ->visit(route('plate.create'))
                 ->radio('style_id', $style->id)
                 ->type('make', 'Toyota')
                 ->type('model', 'Camry')
@@ -85,7 +85,7 @@ class LicensePlateBrowserTest extends DuskTestCase
                 ->type('color', 'Silver')
                 ->type('year', '2100')
                 ->press('Register Vehicle')
-                ->assertPathIs('/dmv/plate/create')
+                ->assertRouteIs('plate.create')
                 ->assertSee('The year must be a date before next year.');
         });
 
@@ -122,6 +122,38 @@ class LicensePlateBrowserTest extends DuskTestCase
                 ->assertSee($plate->tag)
                 ->assertSee($plate->make)
                 ->assertSee($plate->model);
+        });
+    }
+
+    public function testOwnerCanSeeEditForm()
+    {
+        $user = factory(User::class)->create();
+        $plate = factory(LicensePlate::class)->create(['user_id' => $user->id]);
+
+        $this->browse(function (Browser $browser) use ($user, $plate) {
+            $browser->loginAs($user)
+                ->visit('dmv/plate/' . $plate->id . '/edit')
+                ->assertInputValue('style_id', $plate->style->id)
+                ->assertInputValue('make', $plate->make)
+                ->assertInputValue('model', $plate->model)
+                ->assertInputValue('class', $plate->class)
+                ->assertInputValue('color', $plate->color)
+                ->assertInputValue('year', $plate->year);
+        });
+    }
+
+    public function testStrangerCannotSeeUnownedEditForm()
+    {
+        $stranger = factory(User::class)->create();
+        $plate = factory(LicensePlate::class)->create([
+            'user_id' => factory(User::class)->create()->id
+        ]);
+
+        $this->browse(function (Browser $browser) use ($stranger, $plate) {
+            $browser->loginAs($stranger)
+                ->visit('dmv/plate/' . $plate->id . '/edit')
+                ->assertMissing('form')
+                ->assertTitleContains('Page Not Found');
         });
     }
 }

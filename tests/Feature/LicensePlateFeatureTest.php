@@ -26,14 +26,14 @@ class LicensePlateFeatureTest extends TestCase
 
         // View the page as a user
         $this->actingAs($user)
-            ->get('dmv/plate/create')
+            ->get(route('plate.create'))
             ->assertStatus(200);
     }
 
     public function testGuestCannotAccessCreateForm()
     {
         // View the page while unauthenticated
-        $this->get('dmv/plate/create')
+        $this->get(route('plate.create'))
             ->assertRedirect('login');
     }
 
@@ -45,7 +45,7 @@ class LicensePlateFeatureTest extends TestCase
         // Create a license plate
         $this->actingAs($user)
             ->post('dmv/plate', $validData)
-            ->assertRedirect('dmv/plate/1')
+            ->assertRedirect('dmv/plate/1') // TODO: replace with route()
             ->assertSessionHas('success');
 
         // Record should appear in the database
@@ -142,7 +142,7 @@ class LicensePlateFeatureTest extends TestCase
         // Attempt to view the new plate as another user
         $this->actingAs($stranger)
             ->get("dmv/plate/{$plate->id}")
-            ->assertStatus(403);
+            ->assertStatus(404);
     }
 
     public function testOwnerCanUpdateExistingPlate()

@@ -48,4 +48,9 @@ class LicensePlate extends Model
     {
         return $this->belongsTo('App\User');
     }
+
+    public function style()
+    {
+        return $this->belongsTo('App\LicensePlateStyle');
+    }
 }
